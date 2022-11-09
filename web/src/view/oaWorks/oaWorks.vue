@@ -75,8 +75,8 @@
             />
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作">
-      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
+    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作" width="40%">
+      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="120px">
         <el-form-item label="身份证号:"  prop="cardNumbaer" >
           <el-input v-model="formData.cardNumbaer" :clearable="true"  placeholder="请输入" />
         </el-form-item>
@@ -86,11 +86,11 @@
         <el-form-item label="绩效值:"  prop="score" >
           <el-input-number v-model="formData.score"  style="width:100%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="审核状态:"  prop="status" >
+        <!-- <el-form-item label="审核状态:"  prop="status" >
             <el-select v-model="formData.status" placeholder="请选择" style="width:100%" :clearable="true" >
                <el-option v-for="item in ['已审核','待审核']" :key="item" :label="item" :value="item" />
             </el-select>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -128,6 +128,7 @@ const formData = ref({
         cardNumbaer: '',
         month: 0,
         score: 0,
+        status: '待审核',
         })
 
 // 验证规则
@@ -266,6 +267,7 @@ const updateOaWorksFunc = async(row) => {
     type.value = 'update'
     if (res.code === 0) {
         formData.value = res.data.reoaWorks
+        formData.value.status = '待审核'
         dialogFormVisible.value = true
     }
 }

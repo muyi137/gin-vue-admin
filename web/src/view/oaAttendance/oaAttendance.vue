@@ -12,7 +12,12 @@
 
         </el-form-item>
         <el-form-item label="月份">
-         <el-input v-model="searchInfo.month" placeholder="搜索条件" />
+            
+             <el-input v-model.number="searchInfo.month" placeholder="搜索条件" />
+
+        </el-form-item>
+        <el-form-item label="状态">
+         <el-input v-model="searchInfo.status" placeholder="搜索条件" />
 
         </el-form-item>
         <el-form-item>
@@ -49,11 +54,15 @@
         </el-table-column>
         <el-table-column align="left" label="身份证号" prop="cardNumber" width="120" />
         <el-table-column sortable align="left" label="月份" prop="month" width="120" />
-        <el-table-column sortable align="left" label="绩效值" prop="score" width="120" />
-        <el-table-column align="left" label="状态" prop="status" width="120" />
+        <el-table-column sortable align="left" label="应出勤天数" prop="need" width="120" />
+        <el-table-column sortable align="left" label="请假天数" prop="leave" width="120" />
+        <el-table-column sortable align="left" label="旷工" prop="absent" width="120" />
+        <el-table-column sortable align="left" label="迟到早退天数" prop="cdzt" width="120" />
+        <el-table-column sortable align="left" label="状态" prop="status" width="120" />
+        <el-table-column sortable align="left" label="实际签到天数" prop="signed" width="120" />
         <el-table-column align="left" label="按钮组">
             <template #default="scope">
-            <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaAppraisalFunc(scope.row)">变更</el-button>
+            <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaAttendanceFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -70,23 +79,35 @@
             />
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作" width="40%">
-      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="120px">
+    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作" >
+      <el-form  :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="140px">
         <el-form-item label="身份证号:"  prop="cardNumber" >
-          <el-input v-model="formData.cardNumber" :clearable="true"  placeholder="请输入" />
+          <el-input v-model="formData.cardNumber" :clearable="true" style="width:30%" placeholder="请输入" />
         </el-form-item>
         <el-form-item label="月份:"  prop="month" >
-          <el-input v-model="formData.month" :clearable="true"  placeholder="请输入" />
+          <el-input v-model.number="formData.month" :clearable="true" style="width:10%"  placeholder="请输入" />
         </el-form-item>
-         
-        <el-form-item label="绩效值:"  prop="score" >
-          <el-input-number v-model="formData.score"  style="width:100%" :precision="2" :clearable="true"  />
+        <el-form-item label="应出勤天数:"  prop="need" >
+          <el-input-number v-model="formData.need"  style="width:20%" :precision="2" :clearable="false"  />
+        </el-form-item>
+        <el-form-item label="请假天数:"  prop="leave" >
+          <el-input-number v-model="formData.leave"  style="width:20%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="旷工:"  prop="absent" >
+          <el-input-number v-model="formData.absent"  style="width:20%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="迟到早退天数:"  prop="cdzt" >
+          <el-input-number v-model="formData.cdzt"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
         <!-- <el-form-item label="状态:"  prop="status" >
             <el-select v-model="formData.status" placeholder="请选择" style="width:100%" :clearable="true" >
                <el-option v-for="item in ['已审核','待审核']" :key="item" :label="item" :value="item" />
             </el-select>
         </el-form-item> -->
+        <el-form-item label="实际签到天数:"  prop="signed" >
+           
+          <el-input-number v-model="formData.signed"  style="width:20%" :precision="2" :clearable="true"  />
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -100,19 +121,19 @@
 
 <script>
 export default {
-  name: 'OaAppraisal'
+  name: 'OaAttendance'
 }
 </script>
 
 <script setup>
 import {
-  createOaAppraisal,
-  deleteOaAppraisal,
-  deleteOaAppraisalByIds,
-  updateOaAppraisal,
-  findOaAppraisal,
-  getOaAppraisalList
-} from '@/api/oaAppraisal'
+  createOaAttendance,
+  deleteOaAttendance,
+  deleteOaAttendanceByIds,
+  updateOaAttendance,
+  findOaAttendance,
+  getOaAttendanceList
+} from '@/api/oaAttendance'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
@@ -122,9 +143,12 @@ import { ref, reactive } from 'vue'
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
         cardNumber: '',
-        month: '',
-        score: 0,
-        status: '待审核',
+        month: 0,
+        need: 0,
+        leave: 0,
+        absent: 0,
+        cdzt: 0,
+        signed: '',
         })
 
 // 验证规则
@@ -139,7 +163,17 @@ const rule = reactive({
                    message: '',
                    trigger: ['input','blur'],
                }],
-               score : [{
+               need : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
+               status : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
+               signed : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
@@ -183,7 +217,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getOaAppraisalList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getOaAttendanceList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -218,7 +252,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteOaAppraisalFunc(row)
+            deleteOaAttendanceFunc(row)
         })
     }
 
@@ -240,7 +274,7 @@ const onDelete = async() => {
         multipleSelection.value.map(item => {
           ids.push(item.ID)
         })
-      const res = await deleteOaAppraisalByIds({ ids })
+      const res = await deleteOaAttendanceByIds({ ids })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -258,20 +292,19 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateOaAppraisalFunc = async(row) => {
-    const res = await findOaAppraisal({ ID: row.ID })
+const updateOaAttendanceFunc = async(row) => {
+    const res = await findOaAttendance({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.reoaAppraisal
-        formData.value.status = '待审核'
+        formData.value = res.data.reoaAttendance
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteOaAppraisalFunc = async (row) => {
-    const res = await deleteOaAppraisal({ ID: row.ID })
+const deleteOaAttendanceFunc = async (row) => {
+    const res = await deleteOaAttendance({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -298,8 +331,12 @@ const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
         cardNumber: '',
-        month: '',
-        score: 0,
+        month: 0,
+        need: 0,
+        leave: 0,
+        absent: 0,
+        cdzt: 0,
+        signed: '',
         }
 }
 // 弹窗确定
@@ -309,13 +346,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createOaAppraisal(formData.value)
+                  res = await createOaAttendance(formData.value)
                   break
                 case 'update':
-                  res = await updateOaAppraisal(formData.value)
+                  res = await updateOaAttendance(formData.value)
                   break
                 default:
-                  res = await createOaAppraisal(formData.value)
+                  res = await createOaAttendance(formData.value)
                   break
               }
               if (res.code === 0) {
