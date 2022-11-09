@@ -28,12 +28,12 @@
         </el-form-item>
         <el-form-item label="学历:" prop="qualifications">
           <el-select v-model="formData.qualifications" placeholder="请选择" :clearable="true">
-            <el-option v-for="(item,key) in education backgroundOptions" :key="key" :label="item.label" :value="item.value" />
+            <el-option v-for="(item,key) in educationOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="职称:" prop="professional">
           <el-select v-model="formData.professional" placeholder="请选择" :clearable="true">
-            <el-option v-for="(item,key) in professional titleOptions" :key="key" :label="item.label" :value="item.value" />
+            <el-option v-for="(item,key) in professionalOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="来校时间:" prop="hiredate">
@@ -75,12 +75,12 @@ const route = useRoute()
 const router = useRouter()
 
 const type = ref('')
+const educationOptions = ref([])
+const professionalOptions = ref([])
+const jobsOptions = ref([])
 const collegeOptions = ref([])
 const genderOptions = ref([])
 const positionOptions = ref([])
-const education backgroundOptions = ref([])
-const professional titleOptions = ref([])
-const jobsOptions = ref([])
 const formData = ref({
             college: undefined,
             department: '',
@@ -146,12 +146,12 @@ const init = async () => {
     } else {
       type.value = 'create'
     }
+    educationOptions.value = await getDictFunc('education')
+    professionalOptions.value = await getDictFunc('professional')
+    jobsOptions.value = await getDictFunc('jobs')
     collegeOptions.value = await getDictFunc('college')
     genderOptions.value = await getDictFunc('gender')
     positionOptions.value = await getDictFunc('position')
-    education backgroundOptions.value = await getDictFunc('education background')
-    professional titleOptions.value = await getDictFunc('professional title')
-    jobsOptions.value = await getDictFunc('jobs')
 }
 
 init()

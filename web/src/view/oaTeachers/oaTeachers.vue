@@ -3,9 +3,9 @@
     <div class="gva-search-box">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
       <el-form-item label="创建时间">
-      <el-date-picker v-model="searchInfo.startCreatedAt" type="date" placeholder="开始时间"></el-date-picker>
+      <el-date-picker v-model="searchInfo.startCreatedAt" type="datetime" placeholder="开始时间"></el-date-picker>
        —
-      <el-date-picker v-model="searchInfo.endCreatedAt" type="date" placeholder="结束时间"></el-date-picker>
+      <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束时间"></el-date-picker>
       </el-form-item>
            <el-form-item label="学院" prop="college">
             <el-select v-model="searchInfo.college" clearable placeholder="请选择" @clear="()=>{searchInfo.college=undefined}">
@@ -18,7 +18,7 @@
         </el-form-item>
            <el-form-item label="学历" prop="qualifications">
             <el-select v-model="searchInfo.qualifications" clearable placeholder="请选择" @clear="()=>{searchInfo.qualifications=undefined}">
-              <el-option v-for="(item,key) in education backgroundOptions" :key="key" :label="item.label" :value="item.value" />
+              <el-option v-for="(item,key) in educationOptions" :key="key" :label="item.label" :value="item.value" />
             </el-select>
             </el-form-item>
            <el-form-item label="岗位" prop="jobs">
@@ -78,12 +78,12 @@
         </el-table-column>
         <el-table-column align="left" label="学历" prop="qualifications" width="120">
             <template #default="scope">
-            {{ filterDict(scope.row.qualifications,education backgroundOptions) }}
+            {{ filterDict(scope.row.qualifications,educationOptions) }}
             </template>
         </el-table-column>
         <el-table-column align="left" label="职称" prop="professional" width="120">
             <template #default="scope">
-            {{ filterDict(scope.row.professional,professional titleOptions) }}
+            {{ filterDict(scope.row.professional,professionalOptions) }}
             </template>
         </el-table-column>
          <el-table-column align="left" label="来校时间" width="180">
@@ -113,50 +113,53 @@
             />
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作">
-      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
+    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="教职工信息" >
+      <el-form  :inline="true" :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="120px" >
         <el-form-item label="学院:"  prop="college" >
-          <el-select v-model="formData.college" placeholder="请选择" style="width:100%" :clearable="true" >
+          <el-select v-model="formData.college" placeholder="请选择"   :clearable="true" >
             <el-option v-for="(item,key) in collegeOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="部门:"  prop="department" >
-          <el-input v-model="formData.department" :clearable="true"  placeholder="请输入" />
+          <el-input v-model="formData.department" :clearable="true"   placeholder="请输入" />
         </el-form-item>
         <el-form-item label="姓名:"  prop="name" >
-          <el-input v-model="formData.name" :clearable="true"  placeholder="请输入" />
+          <el-input v-model="formData.name" :clearable="true"   placeholder="请输入" />
         </el-form-item>
         <el-form-item label="性别:"  prop="gender" >
-          <el-select v-model="formData.gender" placeholder="请选择" style="width:100%" :clearable="true" >
+          <el-select v-model="formData.gender" placeholder="请选择"  :clearable="true" >
             <el-option v-for="(item,key) in genderOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="身份证号:"  prop="cardNumber" >
-          <el-input v-model="formData.cardNumber" :clearable="true"  placeholder="请输入" />
-        </el-form-item>
         <el-form-item label="职务:"  prop="position" >
-          <el-select v-model="formData.position" placeholder="请选择" style="width:100%" :clearable="true" >
+          <el-select v-model="formData.position" placeholder="请选择"   :clearable="true" >
             <el-option v-for="(item,key) in positionOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
+        <el-form-item label="身份证号:"  prop="cardNumber" >
+          <el-input v-model="formData.cardNumber" :clearable="true"    placeholder="请输入" />
+        </el-form-item>
+         
         <el-form-item label="学历:"  prop="qualifications" >
-          <el-select v-model="formData.qualifications" placeholder="请选择" style="width:100%" :clearable="true" >
-            <el-option v-for="(item,key) in education backgroundOptions" :key="key" :label="item.label" :value="item.value" />
+          <el-select v-model="formData.qualifications" placeholder="请选择"   :clearable="true" >
+            <el-option v-for="(item,key) in educationOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="职称:"  prop="professional" >
-          <el-select v-model="formData.professional" placeholder="请选择" style="width:100%" :clearable="true" >
-            <el-option v-for="(item,key) in professional titleOptions" :key="key" :label="item.label" :value="item.value" />
+          <el-select v-model="formData.professional" placeholder="请选择"   :clearable="true" >
+            <el-option v-for="(item,key) in professionalOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="来校时间:"  prop="hiredate" >
-          <el-date-picker v-model="formData.hiredate" type="date" style="width:100%" placeholder="选择日期" :clearable="true"  />
-        </el-form-item>
         <el-form-item label="岗位:"  prop="jobs" >
-          <el-select v-model="formData.jobs" placeholder="请选择" style="width:100%" :clearable="true" >
+          <el-select v-model="formData.jobs" placeholder="请选择"  :clearable="true" >
             <el-option v-for="(item,key) in jobsOptions" :key="key" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
+
+        <el-form-item label="来校时间:"  prop="hiredate" >
+          <el-date-picker v-model="formData.hiredate" type="date"   placeholder="选择日期" :clearable="true"  />
+        </el-form-item>
+        
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -190,12 +193,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 
 // 自动化生成的字典（可能为空）以及字段
+const educationOptions = ref([])
+const professionalOptions = ref([])
+const jobsOptions = ref([])
 const collegeOptions = ref([])
 const genderOptions = ref([])
 const positionOptions = ref([])
-const education backgroundOptions = ref([])
-const professional titleOptions = ref([])
-const jobsOptions = ref([])
 const formData = ref({
         college: undefined,
         department: '',
@@ -205,7 +208,7 @@ const formData = ref({
         position: undefined,
         qualifications: undefined,
         professional: undefined,
-        hiredate: new Date(),
+        hiredate: '',
         jobs: undefined,
         })
 
@@ -300,12 +303,12 @@ getTableData()
 
 // 获取需要的字典 可能为空 按需保留
 const setOptions = async () =>{
+    educationOptions.value = await getDictFunc('education')
+    professionalOptions.value = await getDictFunc('professional')
+    jobsOptions.value = await getDictFunc('jobs')
     collegeOptions.value = await getDictFunc('college')
     genderOptions.value = await getDictFunc('gender')
     positionOptions.value = await getDictFunc('position')
-    education backgroundOptions.value = await getDictFunc('education background')
-    professional titleOptions.value = await getDictFunc('professional title')
-    jobsOptions.value = await getDictFunc('jobs')
 }
 
 // 获取需要的字典 可能为空 按需保留
