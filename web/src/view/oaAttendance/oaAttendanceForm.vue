@@ -26,7 +26,7 @@
         </el-select>
         </el-form-item>
         <el-form-item label="实际签到天数:" prop="signed">
-          <el-input v-model="formData.signed" :clearable="true" placeholder="请输入" />
+          <el-input-number v-model="formData.signed" :precision="2" :clearable="true"></el-input-number>
         </el-form-item>
         <el-form-item>
           <el-button size="small" type="primary" @click="save">保存</el-button>
@@ -66,7 +66,7 @@ const formData = ref({
             leave: 0,
             absent: 0,
             cdzt: 0,
-            signed: '',
+            signed: 0,
         })
 // 验证规则
 const rule = reactive({
@@ -81,11 +81,6 @@ const rule = reactive({
                    trigger: ['input','blur'],
                }],
                need : [{
-                   required: true,
-                   message: '',
-                   trigger: ['input','blur'],
-               }],
-               status : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],

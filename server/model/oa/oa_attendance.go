@@ -16,7 +16,7 @@ type OaAttendance struct {
       Absent  *float64 `json:"absent" form:"absent" gorm:"column:absent;comment:旷工天数;size:6;"`
       Cdzt  *float64 `json:"cdzt" form:"cdzt" gorm:"column:cdzt;comment:迟到早退天数;size:6;"`
       Status  string `json:"status" form:"status" gorm:"column:status;type:enum('已审核','待审核');comment:状态;"`
-      Signed  string `json:"signed" form:"signed" gorm:"column:signed;comment:实际签到天数;size:6;"`
+      Signed  *float64 `json:"signed" form:"signed" gorm:"column:signed;comment:实际签到天数;size:6;"`
       CreatedBy  uint   `gorm:"column:created_by;comment:创建者"`
       UpdatedBy  uint   `gorm:"column:updated_by;comment:更新者"`
       DeletedBy  uint   `gorm:"column:deleted_by;comment:删除者"`

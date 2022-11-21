@@ -8,16 +8,7 @@
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束时间"></el-date-picker>
       </el-form-item>
         <el-form-item label="身份证号">
-         <el-input v-model="searchInfo.cardNumber" placeholder="搜索条件" />
-
-        </el-form-item>
-        <el-form-item label="月份">
-            
-             <el-input v-model.number="searchInfo.month" placeholder="搜索条件" />
-
-        </el-form-item>
-        <el-form-item label="状态">
-         <el-input v-model="searchInfo.status" placeholder="搜索条件" />
+         <el-input v-model="searchInfo.card_number" placeholder="搜索条件" />
 
         </el-form-item>
         <el-form-item>
@@ -52,17 +43,20 @@
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="身份证号" prop="cardNumber" width="120" />
-        <el-table-column sortable align="left" label="月份" prop="month" width="120" />
-        <el-table-column sortable align="left" label="应出勤天数" prop="need" width="120" />
-        <el-table-column sortable align="left" label="请假天数" prop="leave" width="120" />
-        <el-table-column sortable align="left" label="旷工" prop="absent" width="120" />
-        <el-table-column sortable align="left" label="迟到早退天数" prop="cdzt" width="120" />
-        <el-table-column sortable align="left" label="状态" prop="status" width="120" />
-        <el-table-column sortable align="left" label="实际签到天数" prop="signed" width="120" />
+        <el-table-column align="left" label="基本工资" prop="basis" width="120" />
+        <el-table-column align="left" label="身份证号" prop="card_number" width="120" />
+        <el-table-column align="left" label="岗位津贴" prop="jobs" width="120" />
+        <el-table-column align="left" label="学历" prop="eduLevel" width="120" />
+        <el-table-column align="left" label="专业职称" prop="proTitles" width="120" />
+        <el-table-column align="left" label="工作年限" prop="workYears" width="120" />
+        <el-table-column align="left" label="统筹" prop="planWhole" width="120" />
+        <el-table-column align="left" label="自定义" prop="custom1" width="120" />
+        <el-table-column align="left" label="自定义2" prop="custom2" width="120" />
+        <el-table-column align="left" label="自定义3" prop="custom3" width="120" />
+        <el-table-column align="left" label="自定义4" prop="custom4" width="120" />
         <el-table-column align="left" label="按钮组">
             <template #default="scope">
-            <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaAttendanceFunc(scope.row)">变更</el-button>
+            <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaSalaryFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
@@ -80,32 +74,39 @@
         </div>
     </div>
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作">
-      <el-form  :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="140px">
-        <el-form-item label="身份证号:"  prop="cardNumber" >
-          <el-input v-model="formData.cardNumber" :clearable="true" style="width:30%" placeholder="请输入" />
+      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
+        <el-form-item label="基本工资:"  prop="basis" >
+          <el-input-number v-model="formData.basis"  style="width:100%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="月份:"  prop="month" >
-          <el-input v-model.number="formData.month" :clearable="true" style="width:10%"  placeholder="请输入" />
+        <el-form-item label="身份证号:"  prop="card_number" >
+          <el-input v-model="formData.card_number" :clearable="true"  placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="应出勤天数:"  prop="need" >
-          <el-input-number v-model="formData.need"  style="width:20%" :precision="2" :clearable="false"  />
+        <el-form-item label="岗位津贴:"  prop="jobs" >
+          <el-input-number v-model="formData.jobs"  style="width:100%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="请假天数:"  prop="leave" >
-          <el-input-number v-model="formData.leave"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="学历:"  prop="eduLevel" >
+          <el-input-number v-model="formData.eduLevel"  style="width:100%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="旷工:"  prop="absent" >
-          <el-input-number v-model="formData.absent"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="专业职称:"  prop="proTitles" >
+          <el-input-number v-model="formData.proTitles"  style="width:100%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="迟到早退天数:"  prop="cdzt" >
-          <el-input-number v-model="formData.cdzt"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="工作年限:"  prop="workYears" >
+          <el-input-number v-model="formData.workYears"  style="width:100%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <!-- <el-form-item label="状态:"  prop="status" >
-            <el-select v-model="formData.status" placeholder="请选择" style="width:100%" :clearable="true" >
-               <el-option v-for="item in ['已审核','待审核']" :key="item" :label="item" :value="item" />
-            </el-select>
-        </el-form-item> -->
-        <el-form-item label="实际签到天数:"  prop="signed" >
-          <el-input-number v-model="formData.signed"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="统筹:"  prop="planWhole" >
+          <el-input-number v-model="formData.planWhole"  style="width:100%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="自定义:"  prop="custom1" >
+          <el-input-number v-model="formData.custom1"  style="width:100%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="自定义2:"  prop="custom2" >
+          <el-input-number v-model="formData.custom2"  style="width:100%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="自定义3:"  prop="custom3" >
+          <el-input-number v-model="formData.custom3"  style="width:100%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="自定义4:"  prop="custom4" >
+          <el-input-number v-model="formData.custom4"  style="width:100%" :precision="2" :clearable="true"  />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -120,19 +121,19 @@
 
 <script>
 export default {
-  name: 'OaAttendance'
+  name: 'OaSalary'
 }
 </script>
 
 <script setup>
 import {
-  createOaAttendance,
-  deleteOaAttendance,
-  deleteOaAttendanceByIds,
-  updateOaAttendance,
-  findOaAttendance,
-  getOaAttendanceList
-} from '@/api/oaAttendance'
+  createOaSalary,
+  deleteOaSalary,
+  deleteOaSalaryByIds,
+  updateOaSalary,
+  findOaSalary,
+  getOaSalaryList
+} from '@/api/oaSalary'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
@@ -141,33 +142,27 @@ import { ref, reactive } from 'vue'
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-        cardNumber: '',
-        month: 0,
-        need: 0,
-        leave: 0,
-        absent: 0,
-        cdzt: 0,
-        signed: 0, 
+        basis: 0,
+        card_number: '',
+        jobs: 0,
+        eduLevel: 0,
+        proTitles: 0,
+        workYears: 0,
+        planWhole: 0,
+        custom1: 0,
+        custom2: 0,
+        custom3: 0,
+        custom4: 0,
         })
 
 // 验证规则
 const rule = reactive({
-               cardNumber : [{
+               basis : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
                }],
-               month : [{
-                   required: true,
-                   message: '',
-                   trigger: ['input','blur'],
-               }],
-               need : [{
-                   required: true,
-                   message: '',
-                   trigger: ['input','blur'],
-               }],
-               signed : [{
+               card_number : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
@@ -211,7 +206,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getOaAttendanceList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getOaSalaryList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -246,7 +241,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteOaAttendanceFunc(row)
+            deleteOaSalaryFunc(row)
         })
     }
 
@@ -268,7 +263,7 @@ const onDelete = async() => {
         multipleSelection.value.map(item => {
           ids.push(item.ID)
         })
-      const res = await deleteOaAttendanceByIds({ ids })
+      const res = await deleteOaSalaryByIds({ ids })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -286,19 +281,19 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateOaAttendanceFunc = async(row) => {
-    const res = await findOaAttendance({ ID: row.ID })
+const updateOaSalaryFunc = async(row) => {
+    const res = await findOaSalary({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.reoaAttendance
+        formData.value = res.data.reoaSalary
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteOaAttendanceFunc = async (row) => {
-    const res = await deleteOaAttendance({ ID: row.ID })
+const deleteOaSalaryFunc = async (row) => {
+    const res = await deleteOaSalary({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -324,13 +319,17 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        cardNumber: '',
-        month: 0,
-        need: 0,
-        leave: 0,
-        absent: 0,
-        cdzt: 0,
-        signed: 0,
+        basis: 0,
+        card_number: '',
+        jobs: 0,
+        eduLevel: 0,
+        proTitles: 0,
+        workYears: 0,
+        planWhole: 0,
+        custom1: 0,
+        custom2: 0,
+        custom3: 0,
+        custom4: 0,
         }
 }
 // 弹窗确定
@@ -340,13 +339,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createOaAttendance(formData.value)
+                  res = await createOaSalary(formData.value)
                   break
                 case 'update':
-                  res = await updateOaAttendance(formData.value)
+                  res = await updateOaSalary(formData.value)
                   break
                 default:
-                  res = await createOaAttendance(formData.value)
+                  res = await createOaSalary(formData.value)
                   break
               }
               if (res.code === 0) {

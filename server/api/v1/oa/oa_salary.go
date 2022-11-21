@@ -12,40 +12,38 @@ import (
     "github.com/flipped-aurora/gin-vue-admin/server/utils"
 )
 
-type OaAttendanceApi struct {
+type OaSalaryApi struct {
 }
 
-var oaAttendanceService = service.ServiceGroupApp.OaServiceGroup.OaAttendanceService
+var oaSalaryService = service.ServiceGroupApp.OaServiceGroup.OaSalaryService
 
 
-// CreateOaAttendance 创建OaAttendance
-// @Tags OaAttendance
-// @Summary 创建OaAttendance
+// CreateOaSalary 创建OaSalary
+// @Tags OaSalary
+// @Summary 创建OaSalary
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body oa.OaAttendance true "创建OaAttendance"
+// @Param data body oa.OaSalary true "创建OaSalary"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /oaAttendance/createOaAttendance [post]
-func (oaAttendanceApi *OaAttendanceApi) CreateOaAttendance(c *gin.Context) {
-	var oaAttendance oa.OaAttendance
-	err := c.ShouldBindJSON(&oaAttendance)
+// @Router /oaSalary/createOaSalary [post]
+func (oaSalaryApi *OaSalaryApi) CreateOaSalary(c *gin.Context) {
+	var oaSalary oa.OaSalary
+	err := c.ShouldBindJSON(&oaSalary)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-    oaAttendance.CreatedBy = utils.GetUserID(c)
+    oaSalary.CreatedBy = utils.GetUserID(c)
     verify := utils.Rules{
-        "CardNumber":{utils.NotEmpty()},
-        "Month":{utils.NotEmpty()},
-        "Need":{utils.NotEmpty()},
-        "Signed":{utils.NotEmpty()},
+        "Basis":{utils.NotEmpty()},
+        "Card_number":{utils.NotEmpty()},
     }
-	if err := utils.Verify(oaAttendance, verify); err != nil {
+	if err := utils.Verify(oaSalary, verify); err != nil {
     		response.FailWithMessage(err.Error(), c)
     		return
     	}
-	if err := oaAttendanceService.CreateOaAttendance(oaAttendance); err != nil {
+	if err := oaSalaryService.CreateOaSalary(oaSalary); err != nil {
         global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -53,24 +51,24 @@ func (oaAttendanceApi *OaAttendanceApi) CreateOaAttendance(c *gin.Context) {
 	}
 }
 
-// DeleteOaAttendance 删除OaAttendance
-// @Tags OaAttendance
-// @Summary 删除OaAttendance
+// DeleteOaSalary 删除OaSalary
+// @Tags OaSalary
+// @Summary 删除OaSalary
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body oa.OaAttendance true "删除OaAttendance"
+// @Param data body oa.OaSalary true "删除OaSalary"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /oaAttendance/deleteOaAttendance [delete]
-func (oaAttendanceApi *OaAttendanceApi) DeleteOaAttendance(c *gin.Context) {
-	var oaAttendance oa.OaAttendance
-	err := c.ShouldBindJSON(&oaAttendance)
+// @Router /oaSalary/deleteOaSalary [delete]
+func (oaSalaryApi *OaSalaryApi) DeleteOaSalary(c *gin.Context) {
+	var oaSalary oa.OaSalary
+	err := c.ShouldBindJSON(&oaSalary)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-    oaAttendance.DeletedBy = utils.GetUserID(c)
-	if err := oaAttendanceService.DeleteOaAttendance(oaAttendance); err != nil {
+    oaSalary.DeletedBy = utils.GetUserID(c)
+	if err := oaSalaryService.DeleteOaSalary(oaSalary); err != nil {
         global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -78,16 +76,16 @@ func (oaAttendanceApi *OaAttendanceApi) DeleteOaAttendance(c *gin.Context) {
 	}
 }
 
-// DeleteOaAttendanceByIds 批量删除OaAttendance
-// @Tags OaAttendance
-// @Summary 批量删除OaAttendance
+// DeleteOaSalaryByIds 批量删除OaSalary
+// @Tags OaSalary
+// @Summary 批量删除OaSalary
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.IdsReq true "批量删除OaAttendance"
+// @Param data body request.IdsReq true "批量删除OaSalary"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /oaAttendance/deleteOaAttendanceByIds [delete]
-func (oaAttendanceApi *OaAttendanceApi) DeleteOaAttendanceByIds(c *gin.Context) {
+// @Router /oaSalary/deleteOaSalaryByIds [delete]
+func (oaSalaryApi *OaSalaryApi) DeleteOaSalaryByIds(c *gin.Context) {
 	var IDS request.IdsReq
     err := c.ShouldBindJSON(&IDS)
 	if err != nil {
@@ -95,7 +93,7 @@ func (oaAttendanceApi *OaAttendanceApi) DeleteOaAttendanceByIds(c *gin.Context) 
 		return
 	}
     deletedBy := utils.GetUserID(c)
-	if err := oaAttendanceService.DeleteOaAttendanceByIds(IDS,deletedBy); err != nil {
+	if err := oaSalaryService.DeleteOaSalaryByIds(IDS,deletedBy); err != nil {
         global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
@@ -103,34 +101,32 @@ func (oaAttendanceApi *OaAttendanceApi) DeleteOaAttendanceByIds(c *gin.Context) 
 	}
 }
 
-// UpdateOaAttendance 更新OaAttendance
-// @Tags OaAttendance
-// @Summary 更新OaAttendance
+// UpdateOaSalary 更新OaSalary
+// @Tags OaSalary
+// @Summary 更新OaSalary
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body oa.OaAttendance true "更新OaAttendance"
+// @Param data body oa.OaSalary true "更新OaSalary"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /oaAttendance/updateOaAttendance [put]
-func (oaAttendanceApi *OaAttendanceApi) UpdateOaAttendance(c *gin.Context) {
-	var oaAttendance oa.OaAttendance
-	err := c.ShouldBindJSON(&oaAttendance)
+// @Router /oaSalary/updateOaSalary [put]
+func (oaSalaryApi *OaSalaryApi) UpdateOaSalary(c *gin.Context) {
+	var oaSalary oa.OaSalary
+	err := c.ShouldBindJSON(&oaSalary)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-    oaAttendance.UpdatedBy = utils.GetUserID(c)
+    oaSalary.UpdatedBy = utils.GetUserID(c)
       verify := utils.Rules{
-          "CardNumber":{utils.NotEmpty()},
-          "Month":{utils.NotEmpty()},
-          "Need":{utils.NotEmpty()},
-          "Signed":{utils.NotEmpty()},
+          "Basis":{utils.NotEmpty()},
+          "Card_number":{utils.NotEmpty()},
       }
-    if err := utils.Verify(oaAttendance, verify); err != nil {
+    if err := utils.Verify(oaSalary, verify); err != nil {
       	response.FailWithMessage(err.Error(), c)
       	return
      }
-	if err := oaAttendanceService.UpdateOaAttendance(oaAttendance); err != nil {
+	if err := oaSalaryService.UpdateOaSalary(oaSalary); err != nil {
         global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -138,47 +134,47 @@ func (oaAttendanceApi *OaAttendanceApi) UpdateOaAttendance(c *gin.Context) {
 	}
 }
 
-// FindOaAttendance 用id查询OaAttendance
-// @Tags OaAttendance
-// @Summary 用id查询OaAttendance
+// FindOaSalary 用id查询OaSalary
+// @Tags OaSalary
+// @Summary 用id查询OaSalary
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query oa.OaAttendance true "用id查询OaAttendance"
+// @Param data query oa.OaSalary true "用id查询OaSalary"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /oaAttendance/findOaAttendance [get]
-func (oaAttendanceApi *OaAttendanceApi) FindOaAttendance(c *gin.Context) {
-	var oaAttendance oa.OaAttendance
-	err := c.ShouldBindQuery(&oaAttendance)
+// @Router /oaSalary/findOaSalary [get]
+func (oaSalaryApi *OaSalaryApi) FindOaSalary(c *gin.Context) {
+	var oaSalary oa.OaSalary
+	err := c.ShouldBindQuery(&oaSalary)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if reoaAttendance, err := oaAttendanceService.GetOaAttendance(oaAttendance.ID); err != nil {
+	if reoaSalary, err := oaSalaryService.GetOaSalary(oaSalary.ID); err != nil {
         global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"reoaAttendance": reoaAttendance}, c)
+		response.OkWithData(gin.H{"reoaSalary": reoaSalary}, c)
 	}
 }
 
-// GetOaAttendanceList 分页获取OaAttendance列表
-// @Tags OaAttendance
-// @Summary 分页获取OaAttendance列表
+// GetOaSalaryList 分页获取OaSalary列表
+// @Tags OaSalary
+// @Summary 分页获取OaSalary列表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query oaReq.OaAttendanceSearch true "分页获取OaAttendance列表"
+// @Param data query oaReq.OaSalarySearch true "分页获取OaSalary列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /oaAttendance/getOaAttendanceList [get]
-func (oaAttendanceApi *OaAttendanceApi) GetOaAttendanceList(c *gin.Context) {
-	var pageInfo oaReq.OaAttendanceSearch
+// @Router /oaSalary/getOaSalaryList [get]
+func (oaSalaryApi *OaSalaryApi) GetOaSalaryList(c *gin.Context) {
+	var pageInfo oaReq.OaSalarySearch
 	err := c.ShouldBindQuery(&pageInfo)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if list, total, err := oaAttendanceService.GetOaAttendanceInfoList(pageInfo); err != nil {
+	if list, total, err := oaSalaryService.GetOaSalaryInfoList(pageInfo); err != nil {
 	    global.GVA_LOG.Error("获取失败!", zap.Error(err))
         response.FailWithMessage("获取失败", c)
     } else {
