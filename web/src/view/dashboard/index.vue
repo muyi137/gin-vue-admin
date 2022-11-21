@@ -6,7 +6,7 @@
           <div class="gva-top-card-left-title">早安，管理员，请开始一天的工作吧</div>
           <div class="gva-top-card-left-dot">{{ weatherInfo }}</div>
           <div class="gva-top-card-left-rows">
-            <el-row>
+            <!-- <el-row>
               <el-col :span="8" :xs="24" :sm="8">
                 <div class="flex-center">
                   <el-icon class="dashboard-icon">
@@ -31,32 +31,32 @@
                   好评率 (99%)
                 </div>
               </el-col>
-            </el-row>
+            </el-row> -->
           </div>
           <div>
-            <div class="gva-top-card-left-item">
+            <!-- <div class="gva-top-card-left-item" >
               使用教学：
               <a
                 style="color:#409EFF"
                 target="view_window"
                 href="https://www.bilibili.com/video/BV1Rg411u7xH/"
               >https://www.bilibili.com/video/BV1Rg411u7xH</a>
-            </div>
-            <div class="gva-top-card-left-item">
+            </div> -->
+            <!-- <div class="gva-top-card-left-item">
               插件仓库：
               <a
                 style="color:#409EFF"
                 target="view_window"
                 href="https://plugin.gin-vue-admin.com/#/layout/home"
               >https://plugin.gin-vue-admin.com</a>
-            </div>
+            </div> -->
           </div>
         </div>
         <img src="@/assets/dashboard.png" class="gva-top-card-right" alt>
       </div>
     </div>
     <div class="gva-card-box">
-      <el-card class="gva-card quick-entrance">
+      <!-- <el-card class="gva-card quick-entrance">
         <template #header>
           <div class="card-header">
             <span>快捷入口</span>
@@ -81,7 +81,7 @@
             </div>
           </el-col>
         </el-row>
-      </el-card>
+      </el-card> -->
     <!-- <div class="quick-entrance-title"></div> -->
     </div>
     <div class="gva-card-box">
@@ -95,7 +95,7 @@
               <echarts-line />
             </el-col>
             <el-col :xs="24" :sm="6">
-              <dashboard-table />
+              <!-- <dashboard-table /> -->
             </el-col>
           </el-row>
         </div>

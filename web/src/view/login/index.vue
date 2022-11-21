@@ -88,9 +88,9 @@
           <a href="http://doc.henrongyi.top/" target="_blank">
             <img src="@/assets/docs.png" class="link-icon">
           </a>
-          <a href="https://support.qq.com/product/371961" target="_blank">
+          <!-- <a href="https://support.qq.com/product/371961" target="_blank">
             <img src="@/assets/kefu.png" class="link-icon">
-          </a>
+          </a> -->
           <a
             href="https://github.com/flipped-aurora/gin-vue-admin"
             target="_blank"

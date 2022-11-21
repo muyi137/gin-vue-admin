@@ -39,17 +39,17 @@
                   <close />
                 </el-icon>
               </p>
-              <p class="person-info">这个家伙很懒，什么都没有留下</p>
+              <!-- <p class="person-info">这个家伙很懒，什么都没有留下</p> -->
             </div>
             <div class="user-information">
               <ul>
-                <li>
+                <!-- <li>
                   <el-icon>
                     <user />
                   </el-icon>
                   {{ userStore.userInfo.nickName }}
-                </li>
-                <el-tooltip
+                </li> -->
+                <!-- <el-tooltip
                   class="item"
                   effect="light"
                   content="北京反转极光科技有限公司-技术部-前端事业群"
@@ -67,8 +67,8 @@
                     <video-camera />
                   </el-icon>
                   中国·北京市·朝阳区
-                </li>
-                <el-tooltip
+                </li> -->
+                <!-- <el-tooltip
                   class="item"
                   effect="light"
                   content="GoLang/JavaScript/Vue/Gorm"
@@ -80,7 +80,7 @@
                     </el-icon>
                     GoLang/JavaScript/Vue/Gorm
                   </li>
-                </el-tooltip>
+                </el-tooltip> -->
               </ul>
             </div>
           </div>

@@ -8,7 +8,16 @@
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束时间"></el-date-picker>
       </el-form-item>
         <el-form-item label="身份证号">
-         <el-input v-model="searchInfo.card_number" placeholder="搜索条件" />
+         <el-input v-model="searchInfo.cardNumbaer" placeholder="搜索条件" />
+
+        </el-form-item>
+        <el-form-item label="月份">
+            
+             <el-input v-model.number="searchInfo.month" placeholder="搜索条件" />
+
+        </el-form-item>
+        <el-form-item label="审核状态">
+         <el-input v-model="searchInfo.status" placeholder="搜索条件" />
 
         </el-form-item>
         <el-form-item>
@@ -19,7 +28,9 @@
     </div>
     <div class="gva-table-box">
         <div class="gva-btn-list">
-            <el-button size="small" type="primary" icon="plus" @click="openDialog">新增</el-button>
+          <el-button size="small" type="primary" icon="plus" :disabled="!multipleSelection.length" @click="Reviewed" >已审核</el-button> 
+          <el-button size="small" type="primary" icon="plus" :disabled="!multipleSelection.length" @click="beReview" >待审核</el-button> 
+            <!-- <el-button size="small" type="primary" icon="plus" @click="openDialog">新增</el-button>
             <el-popover v-model:visible="deleteVisible" placement="top" width="160">
             <p>确定要删除吗？</p>
             <div style="text-align: right; margin-top: 8px;">
@@ -29,7 +40,7 @@
             <template #reference>
                 <el-button icon="delete" size="small" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
             </template>
-            </el-popover>
+            </el-popover> -->
         </div>
         <el-table
         ref="multipleTable"
@@ -40,28 +51,20 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" width="150"  label="操作" >
+        <el-table-column align="left" label="操作" width="160">
             <template #default="scope">
-              <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaSalaryFunc(scope.row)">变更</el-button>
-              <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">删除</el-button>
+              <el-button type="primary" link icon="edit" size="small" @click="ReviewedRow(scope.row,'已审核')">已审核</el-button>
+            <el-button type="primary" link icon="delete" size="small" @click="ReviewedRow(scope.row,'待审核')">待审核</el-button>
             </template>
         </el-table-column>
-
+        
+        <el-table-column align="left" label="身份证号" prop="cardNumbaer" width="120" />
+        <el-table-column sortable align="left" label="月份" prop="month" width="120" />
+        <el-table-column sortable align="left" label="绩效值" prop="score" width="120" />
+        <el-table-column sortable align="left" label="审核状态" prop="status" width="120" />
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="基本工资" prop="basis" width="120" />
-        <el-table-column align="left" label="身份证号" prop="card_number" width="180" />
-        <el-table-column align="left" label="岗位津贴" prop="jobs" width="120" />
-        <el-table-column align="left" label="学历" prop="eduLevel" width="120" />
-        <el-table-column align="left" label="专业职称" prop="proTitles" width="120" />
-        <el-table-column align="left" label="工作年限" prop="workYears" width="120" />
-        <el-table-column align="left" label="统筹" prop="planWhole" width="120" />
-        <el-table-column align="left" label="自定义" prop="custom1" width="120" />
-        <el-table-column align="left" label="自定义2" prop="custom2" width="120" />
-        <el-table-column align="left" label="自定义3" prop="custom3" width="120" />
-        <el-table-column align="left" label="自定义4" prop="custom4" width="120" />
-       
         </el-table>
         <div class="gva-pagination">
             <el-pagination
@@ -75,42 +78,22 @@
             />
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作">
-      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="180px">
-       
-        <el-form-item label="身份证号:"  prop="card_number" >
-          <el-input v-model="formData.card_number" style="width:60%" :clearable="true"  placeholder="请输入" />
+    <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作" width="40%">
+      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="120px">
+        <el-form-item label="身份证号:"  prop="cardNumbaer" >
+          <el-input v-model="formData.cardNumbaer" :clearable="true"  placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="基本工资:"  prop="basis" >
-          <el-input-number v-model="formData.basis"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="月份:"  prop="month" >
+          <el-input v-model.number="formData.month" :clearable="true" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="岗位津贴:"  prop="jobs" >
-          <el-input-number v-model="formData.jobs"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="绩效值:"  prop="score" >
+          <el-input-number v-model="formData.score"  style="width:100%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="学历:"  prop="eduLevel" >
-          <el-input-number v-model="formData.eduLevel"  style="width:20%" :precision="2" :clearable="true"  />
-        </el-form-item>
-        <el-form-item label="专业职称:"  prop="proTitles" >
-          <el-input-number v-model="formData.proTitles"  style="width:20%" :precision="2" :clearable="true"  />
-        </el-form-item>
-        <el-form-item label="工作年限:"  prop="workYears" >
-          <el-input-number v-model="formData.workYears"  style="width:20%" :precision="2" :clearable="true"  />
-        </el-form-item>
-        <el-form-item label="统筹:"  prop="planWhole" >
-          <el-input-number v-model="formData.planWhole"  style="width:20%" :precision="2" :clearable="true"  />
-        </el-form-item>
-        <el-form-item label="自定义:"  prop="custom1" >
-          <el-input-number v-model="formData.custom1"  style="width:20%" :precision="2" :clearable="true"  />
-        </el-form-item>
-        <el-form-item label="自定义2:"  prop="custom2" >
-          <el-input-number v-model="formData.custom2"  style="width:20%" :precision="2" :clearable="true"  />
-        </el-form-item>
-        <el-form-item label="自定义3:"  prop="custom3" >
-          <el-input-number v-model="formData.custom3"  style="width:20%" :precision="2" :clearable="true"  />
-        </el-form-item>
-        <el-form-item label="自定义4:"  prop="custom4" >
-          <el-input-number v-model="formData.custom4"  style="width:20%" :precision="2" :clearable="true"  />
-        </el-form-item>
+        <!-- <el-form-item label="审核状态:"  prop="status" >
+            <el-select v-model="formData.status" placeholder="请选择" style="width:100%" :clearable="true" >
+               <el-option v-for="item in ['已审核','待审核']" :key="item" :label="item" :value="item" />
+            </el-select>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -124,19 +107,19 @@
 
 <script>
 export default {
-  name: 'OaSalary'
+  name: 'OaWorks'
 }
 </script>
 
 <script setup>
 import {
-  createOaSalary,
-  deleteOaSalary,
-  deleteOaSalaryByIds,
-  updateOaSalary,
-  findOaSalary,
-  getOaSalaryList
-} from '@/api/oaSalary'
+  createOaWorks,
+  deleteOaWorks,
+  deleteOaWorksByIds,
+  updateOaWorks,
+  findOaWorks,
+  getOaWorksList
+} from '@/api/oaWorks'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
@@ -145,27 +128,25 @@ import { ref, reactive } from 'vue'
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-        basis: 0,
-        card_number: '',
-        jobs: 0,
-        eduLevel: 0,
-        proTitles: 0,
-        workYears: 0,
-        planWhole: 0,
-        custom1: 0,
-        custom2: 0,
-        custom3: 0,
-        custom4: 0,
+        cardNumbaer: '',
+        month: 0,
+        score: 0,
+        status: '待审核',
         })
 
 // 验证规则
 const rule = reactive({
-               basis : [{
+               cardNumbaer : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
                }],
-               card_number : [{
+               month : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
+               score : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
@@ -209,7 +190,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getOaSalaryList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getOaWorksList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -244,13 +225,75 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteOaSalaryFunc(row)
+            deleteOaWorksFunc(row)
         })
     }
 
 
 // 批量删除控制标记
 const deleteVisible = ref(false)
+
+
+const beReview = async () => {
+  
+  if (multipleSelection.value.length === 0) {
+    ElMessage({
+      type: 'warning',
+      message: '请选择要删除的数据'
+    })
+    return
+  }
+
+  multipleSelection.value &&
+    multipleSelection.value.map(item => {
+      formData.value = item
+      formData.value.status = '待审核'
+      console.log(formData.value)
+      const res = updateOaWorks(formData.value)
+      if (res.code === 0) {
+        item.status = '待审核'
+      }
+
+    })
+
+  // getTableData()
+}
+
+const Reviewed = async() => {
+  
+  if (multipleSelection.value.length === 0) {
+    ElMessage({
+      type: 'warning',
+      message: '请选择要删除的数据'
+    })
+    return
+  }
+
+  multipleSelection.value &&
+    multipleSelection.value.map(item => { 
+      formData.value = item
+      formData.value.status = '已审核'
+      console.log(formData.value)
+      
+      const res = updateOaWorks(formData.value) 
+      if (res.code === 0) {
+        item.status = '已审核'
+      }
+    })
+
+  // getTableData() 
+}
+
+const ReviewedRow = (row, status) => {
+ElMessageBox.confirm('确定审核吗?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+}).then(() => { 
+      row.status = status
+      updateOaWorks(row)
+    })
+}
 
 // 多选删除
 const onDelete = async() => {
@@ -266,7 +309,7 @@ const onDelete = async() => {
         multipleSelection.value.map(item => {
           ids.push(item.ID)
         })
-      const res = await deleteOaSalaryByIds({ ids })
+      const res = await deleteOaWorksByIds({ ids })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -284,19 +327,20 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateOaSalaryFunc = async(row) => {
-    const res = await findOaSalary({ ID: row.ID })
+const updateOaWorksFunc = async(row) => {
+    const res = await findOaWorks({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.reoaSalary
+        formData.value = res.data.reoaWorks
+        formData.value.status = '待审核'
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteOaSalaryFunc = async (row) => {
-    const res = await deleteOaSalary({ ID: row.ID })
+const deleteOaWorksFunc = async (row) => {
+    const res = await deleteOaWorks({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -322,17 +366,9 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        basis: 0,
-        card_number: '',
-        jobs: 0,
-        eduLevel: 0,
-        proTitles: 0,
-        workYears: 0,
-        planWhole: 0,
-        custom1: 0,
-        custom2: 0,
-        custom3: 0,
-        custom4: 0,
+        cardNumbaer: '',
+        month: 0,
+        score: 0,
         }
 }
 // 弹窗确定
@@ -342,13 +378,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createOaSalary(formData.value)
+                  res = await createOaWorks(formData.value)
                   break
                 case 'update':
-                  res = await updateOaSalary(formData.value)
+                  res = await updateOaWorks(formData.value)
                   break
                 default:
-                  res = await createOaSalary(formData.value)
+                  res = await createOaWorks(formData.value)
                   break
               }
               if (res.code === 0) {

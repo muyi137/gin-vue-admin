@@ -37,12 +37,12 @@
     >
       <Screenfull class="search-icon" :style="{cursor:'pointer'}" />
     </div>
-    <div
+    <!-- <div
       v-if="btnShow"
       class="user-box"
     >
       <div class="gvaIcon gvaIcon-customer-service" @click="toService" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -95,7 +95,7 @@ const handleReload = () => {
   }, 500)
 }
 const toService = () => {
-  window.open('https://support.qq.com/product/371961')
+  // window.open('https://support.qq.com/product/371961')
 }
 
 </script>
