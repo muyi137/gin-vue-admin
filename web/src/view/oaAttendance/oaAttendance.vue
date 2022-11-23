@@ -49,6 +49,14 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
+
+<el-table-column align="left" label="按钮组" width="160">
+            <template #default="scope">
+            <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaAttendanceFunc(scope.row)">变更</el-button>
+            <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
+
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
@@ -60,12 +68,12 @@
         <el-table-column sortable align="left" label="迟到早退天数" prop="cdzt" width="120" />
         <el-table-column sortable align="left" label="状态" prop="status" width="120" />
         <el-table-column sortable align="left" label="实际签到天数" prop="signed" width="120" />
-        <el-table-column align="left" label="按钮组">
-            <template #default="scope">
-            <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaAttendanceFunc(scope.row)">变更</el-button>
-            <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">删除</el-button>
-            </template>
-        </el-table-column>
+        <el-table-column align="left" label="签到次数" prop="signIns" width="120" />
+        <el-table-column align="left" label="自定义1" prop="custom" width="120" />
+        <el-table-column align="left" label="自定义2" prop="custom2" width="120" />
+        <el-table-column align="left" label="自定义3" prop="custom3" width="120" />
+        <el-table-column align="left" label="自定义5" prop="custom4" width="120" />
+         
         </el-table>
         <div class="gva-pagination">
             <el-pagination
@@ -85,7 +93,7 @@
           <el-input v-model="formData.cardNumber" :clearable="true" style="width:30%" placeholder="请输入" />
         </el-form-item>
         <el-form-item label="月份:"  prop="month" >
-          <el-input v-model.number="formData.month" :clearable="true" style="width:10%"  placeholder="请输入" />
+          <el-input-number v-model.number="formData.month" :clearable="true" style="width:20%"  placeholder="请输入" />
         </el-form-item>
         <el-form-item label="应出勤天数:"  prop="need" >
           <el-input-number v-model="formData.need"  style="width:20%" :precision="2" :clearable="false"  />
@@ -106,6 +114,21 @@
         </el-form-item> -->
         <el-form-item label="实际签到天数:"  prop="signed" >
           <el-input-number v-model="formData.signed"  style="width:20%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="签到次数:"  prop="signIns" >
+          <el-input v-model.number="formData.signIns" :clearable="true" style="width:30%"  placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="自定义1:"  prop="custom" >
+          <el-input v-model="formData.custom" :clearable="true"  style="width:30%" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="自定义2:"  prop="custom2" >
+          <el-input v-model="formData.custom2" :clearable="true"  style="width:30%" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="自定义3:"  prop="custom3" >
+          <el-input v-model="formData.custom3" :clearable="true"  style="width:30%" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="自定义5:"  prop="custom4" >
+          <el-input v-model="formData.custom4" :clearable="true" style="width:30%"  placeholder="请输入" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -147,7 +170,12 @@ const formData = ref({
         leave: 0,
         absent: 0,
         cdzt: 0,
-        signed: 0, 
+        signed: 0,
+        signIns: 0,
+        custom: '',
+        custom2: '',
+        custom3: '',
+        custom4: '',
         })
 
 // 验证规则
@@ -331,6 +359,11 @@ const closeDialog = () => {
         absent: 0,
         cdzt: 0,
         signed: 0,
+        signIns: 0,
+        custom: '',
+        custom2: '',
+        custom3: '',
+        custom4: '',
         }
 }
 // 弹窗确定

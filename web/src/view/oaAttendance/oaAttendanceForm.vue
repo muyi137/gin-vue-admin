@@ -28,6 +28,21 @@
         <el-form-item label="实际签到天数:" prop="signed">
           <el-input-number v-model="formData.signed" :precision="2" :clearable="true"></el-input-number>
         </el-form-item>
+        <el-form-item label="签到次数:" prop="signIns">
+          <el-input v-model.number="formData.signIns" :clearable="true" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="自定义1:" prop="custom">
+          <el-input v-model="formData.custom" :clearable="true" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="自定义2:" prop="custom2">
+          <el-input v-model="formData.custom2" :clearable="true" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="自定义3:" prop="custom3">
+          <el-input v-model="formData.custom3" :clearable="true" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="自定义5:" prop="custom4">
+          <el-input v-model="formData.custom4" :clearable="true" placeholder="请输入" />
+        </el-form-item>
         <el-form-item>
           <el-button size="small" type="primary" @click="save">保存</el-button>
           <el-button size="small" type="primary" @click="back">返回</el-button>
@@ -67,6 +82,11 @@ const formData = ref({
             absent: 0,
             cdzt: 0,
             signed: 0,
+            signIns: 0,
+            custom: '',
+            custom2: '',
+            custom3: '',
+            custom4: '',
         })
 // 验证规则
 const rule = reactive({

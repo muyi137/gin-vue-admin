@@ -88,12 +88,12 @@ local:
   path: uploads/file
   store-path: uploads/file
 mysql:
-  path: 192.168.0.148
-  port: "3306"
+  path: 113.201.151.34
+  port: "13306"
   config: charset=utf8mb4&parseTime=True&loc=Local
   db-name: gongzi
-  username: root
-  password: H9MvYSqY3JmAC4aj
+  username: gongzi
+  password: kzEyie48SMSLNLs2
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: error
@@ -134,7 +134,7 @@ redis:
   password: ""
 system:
   env: public
-  addr: 8888
+  addr: 8881
   db-type: mysql
   oss-type: local
   use-multipoint: false
