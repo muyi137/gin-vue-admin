@@ -11,6 +11,13 @@
          <el-input v-model="searchInfo.card_number" placeholder="搜索条件" />
 
         </el-form-item>
+        <el-form-item label="上报日期">
+            
+            <el-date-picker v-model="searchInfo.startReportTime" type="datetime" placeholder="搜索条件（起）"></el-date-picker>
+            —
+            <el-date-picker v-model="searchInfo.endReportTime" type="datetime" placeholder="搜索条件（止）"></el-date-picker>
+
+        </el-form-item>
         <el-form-item>
           <el-button size="small" type="primary" icon="search" @click="onSubmit">查询</el-button>
           <el-button size="small" icon="refresh" @click="onReset">重置</el-button>
@@ -41,16 +48,17 @@
         >
         <el-table-column type="selection" width="55" />
          
-
         <el-table-column align="left" label="操作" width="160">
             <template #default="scope">
             <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaClassHourFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
-
         <el-table-column align="left" label="身份证号" prop="card_number" width="120" />
         <el-table-column align="left" label="课头(几门课)" prop="classTime" width="120" />
+         <el-table-column align="left" label="上报日期" width="180">
+            <template #default="scope">{{ formatDate(scope.row.reportTime) }}</template>
+         </el-table-column>
         <el-table-column align="left" label="k体" prop="score" width="120" />
         <el-table-column align="left" label="k1体" prop="score2" width="120" />
         <el-table-column align="left" label="k1理" prop="score1" width="120" />
@@ -60,15 +68,15 @@
         <el-table-column align="left" label="k3理" prop="score6" width="120" />
         <el-table-column align="left" label="k3机" prop="score7" width="120" />
         <el-table-column align="left" label="竞赛折算" prop="score8" width="120" />
-
         <el-table-column align="left" label="自定义1" prop="score9" width="120" />
         <el-table-column align="left" label="自定义2" prop="score10" width="120" />
         <el-table-column align="left" label="自定义3" prop="score11" width="120" />
         <el-table-column align="left" label="自定义4" prop="score12" width="120" />
+        <el-table-column align="left" label="状态" prop="status" width="120" />
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        
+
         </el-table>
         <div class="gva-pagination">
             <el-pagination
@@ -89,6 +97,9 @@
         </el-form-item>
         <el-form-item label="课头(几门课):"  prop="classTime" style="width:20%"  >
           <el-input v-model.number="formData.classTime" :clearable="true" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="上报日期:"  prop="reportTime" >
+          <el-date-picker v-model="formData.reportTime" type="date" style="width:40%" placeholder="选择日期" :clearable="true"  />
         </el-form-item>
         <el-form-item label="k体:"  prop="score" >
           <el-input-number v-model="formData.score"  style="width:20%" :precision="2" :clearable="true"  />
@@ -129,6 +140,11 @@
         <el-form-item label="自定义4:"  prop="score12" >
           <el-input-number v-model="formData.score12"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
+        <!-- <el-form-item label="状态:"  prop="status" >
+            <el-select v-model="formData.status" placeholder="请选择" style="width:100%" :clearable="true" >
+               <el-option v-for="item in ['已审核','待审核']" :key="item" :label="item" :value="item" />
+            </el-select>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -165,6 +181,7 @@ import { ref, reactive } from 'vue'
 const formData = ref({
         card_number: '',
         classTime: 0,
+        reportTime: new Date(),
         score: 0,
         score2: 0,
         score1: 0,
@@ -178,6 +195,7 @@ const formData = ref({
         score10: 0,
         score11: 0,
         score12: 0,
+        status : '待审核',
         })
 
 // 验证规则
@@ -188,6 +206,11 @@ const rule = reactive({
                    trigger: ['input','blur'],
                }],
                classTime : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
+               reportTime : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
@@ -346,6 +369,7 @@ const closeDialog = () => {
     formData.value = {
         card_number: '',
         classTime: 0,
+        reportTime: new Date(),
         score: 0,
         score2: 0,
         score1: 0,
@@ -359,6 +383,7 @@ const closeDialog = () => {
         score10: 0,
         score11: 0,
         score12: 0,
+        status : '待审核',
         }
 }
 // 弹窗确定

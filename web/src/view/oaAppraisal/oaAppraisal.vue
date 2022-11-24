@@ -23,6 +23,7 @@
     </div>
     <div class="gva-table-box">
         <div class="gva-btn-list">
+
             <el-button size="small" type="primary" icon="plus" @click="openDialog">新增</el-button>
             <el-popover v-model:visible="deleteVisible" placement="top" width="160">
             <p>确定要删除吗？</p>
@@ -34,6 +35,18 @@
                 <el-button icon="delete" size="small" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
             </template>
             </el-popover>
+
+            <el-upload
+          class="excel-btn"
+          :action="`${path}/excel/importExcel?type=appraisal`"
+          :headers="{'x-token':userStore.token}"
+          :on-success="getTableData"
+          :show-file-list="false"
+        >
+          <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
+        </el-upload>
+        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="handleExcelExport('ExcelExport.xlsx')" style="margin-left: 10px;">导出</el-button>
+        <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
         </div>
         <el-table
         ref="multipleTable"
@@ -114,10 +127,15 @@ import {
   getOaAppraisalList
 } from '@/api/oaAppraisal'
 
+import { useUserStore } from '@/pinia/modules/user'
+import { exportExcel, loadExcelData, downloadTemplate } from '@/api/excel'
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+
+const path = ref(import.meta.env.VITE_BASE_API)
+const userStore = useUserStore()
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
@@ -282,6 +300,10 @@ const deleteOaAppraisalFunc = async (row) => {
         }
         getTableData()
     }
+}
+
+const downloadExcelTemplate = () => {
+  downloadTemplate('ExcelAppraisal.xlsx')
 }
 
 // 弹窗控制标记

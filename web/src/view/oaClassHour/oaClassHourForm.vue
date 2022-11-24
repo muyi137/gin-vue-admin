@@ -8,6 +8,9 @@
         <el-form-item label="课头(几门课):" prop="classTime">
           <el-input v-model.number="formData.classTime" :clearable="true" placeholder="请输入" />
         </el-form-item>
+        <el-form-item label="上报日期:" prop="reportTime">
+          <el-date-picker v-model="formData.reportTime" type="date" placeholder="选择日期" :clearable="true"></el-date-picker>
+        </el-form-item>
         <el-form-item label="k体:" prop="score">
           <el-input-number v-model="formData.score" :precision="2" :clearable="true"></el-input-number>
         </el-form-item>
@@ -47,6 +50,11 @@
         <el-form-item label="自定义4:" prop="score12">
           <el-input-number v-model="formData.score12" :precision="2" :clearable="true"></el-input-number>
         </el-form-item>
+        <el-form-item label="状态:" prop="status">
+        <el-select v-model="formData.status" placeholder="请选择" style="width:100%" :clearable="true">
+          <el-option v-for="item in ['已审核','待审核']" :key="item" :label="item" :value="item" />
+        </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button size="small" type="primary" @click="save">保存</el-button>
           <el-button size="small" type="primary" @click="back">返回</el-button>
@@ -81,6 +89,7 @@ const type = ref('')
 const formData = ref({
             card_number: '',
             classTime: 0,
+            reportTime: new Date(),
             score: 0,
             score2: 0,
             score1: 0,
@@ -103,6 +112,11 @@ const rule = reactive({
                    trigger: ['input','blur'],
                }],
                classTime : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               }],
+               reportTime : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
