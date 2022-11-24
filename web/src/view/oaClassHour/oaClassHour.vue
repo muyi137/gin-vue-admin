@@ -8,16 +8,7 @@
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束时间"></el-date-picker>
       </el-form-item>
         <el-form-item label="身份证号">
-         <el-input v-model="searchInfo.cardNumber" placeholder="搜索条件" />
-
-        </el-form-item>
-        <el-form-item label="月份">
-            
-             <el-input v-model.number="searchInfo.month" placeholder="搜索条件" />
-
-        </el-form-item>
-        <el-form-item label="状态">
-         <el-input v-model="searchInfo.status" placeholder="搜索条件" />
+         <el-input v-model="searchInfo.card_number" placeholder="搜索条件" />
 
         </el-form-item>
         <el-form-item>
@@ -49,31 +40,35 @@
         @selection-change="handleSelectionChange"
         >
         <el-table-column type="selection" width="55" />
+         
 
-<el-table-column align="left" label="按钮组" width="160">
+        <el-table-column align="left" label="操作" width="160">
             <template #default="scope">
-            <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaAttendanceFunc(scope.row)">变更</el-button>
+            <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaClassHourFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">删除</el-button>
             </template>
         </el-table-column>
 
+        <el-table-column align="left" label="身份证号" prop="card_number" width="120" />
+        <el-table-column align="left" label="课头(几门课)" prop="classTime" width="120" />
+        <el-table-column align="left" label="k体" prop="score" width="120" />
+        <el-table-column align="left" label="k1体" prop="score2" width="120" />
+        <el-table-column align="left" label="k1理" prop="score1" width="120" />
+        <el-table-column align="left" label="k1机" prop="score3" width="120" />
+        <el-table-column align="left" label="k2理" prop="score4" width="120" />
+        <el-table-column align="left" label="k2机" prop="score5" width="120" />
+        <el-table-column align="left" label="k3理" prop="score6" width="120" />
+        <el-table-column align="left" label="k3机" prop="score7" width="120" />
+        <el-table-column align="left" label="竞赛折算" prop="score8" width="120" />
+
+        <el-table-column align="left" label="自定义1" prop="score9" width="120" />
+        <el-table-column align="left" label="自定义2" prop="score10" width="120" />
+        <el-table-column align="left" label="自定义3" prop="score11" width="120" />
+        <el-table-column align="left" label="自定义4" prop="score12" width="120" />
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="身份证号" prop="cardNumber" width="120" />
-        <el-table-column sortable align="left" label="月份" prop="month" width="120" />
-        <el-table-column sortable align="left" label="应出勤天数" prop="need" width="120" />
-        <el-table-column sortable align="left" label="请假天数" prop="leave" width="120" />
-        <el-table-column sortable align="left" label="旷工" prop="absent" width="120" />
-        <el-table-column sortable align="left" label="迟到早退天数" prop="cdzt" width="120" />
-        <el-table-column sortable align="left" label="状态" prop="status" width="120" />
-        <el-table-column sortable align="left" label="实际签到天数" prop="signed" width="120" />
-        <el-table-column align="left" label="签到次数" prop="signIns" width="120" />
-        <el-table-column align="left" label="自定义1" prop="custom" width="120" />
-        <el-table-column align="left" label="自定义2" prop="custom2" width="120" />
-        <el-table-column align="left" label="自定义3" prop="custom3" width="120" />
-        <el-table-column align="left" label="自定义5" prop="custom4" width="120" />
-         
+        
         </el-table>
         <div class="gva-pagination">
             <el-pagination
@@ -88,47 +83,51 @@
         </div>
     </div>
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="弹窗操作">
-      <el-form  :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="140px">
-        <el-form-item label="身份证号:"  prop="cardNumber" >
-          <el-input v-model="formData.cardNumber" :clearable="true" style="width:30%" placeholder="请输入" />
+      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="120px">
+        <el-form-item label="身份证号:"  prop="card_number" style="width:40%">
+          <el-input v-model="formData.card_number" :clearable="true"  placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="月份:"  prop="month" >
-          <el-input-number v-model.number="formData.month" :clearable="true" style="width:20%"  placeholder="请输入" />
+        <el-form-item label="课头(几门课):"  prop="classTime" style="width:20%"  >
+          <el-input v-model.number="formData.classTime" :clearable="true" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="应出勤天数:"  prop="need" >
-          <el-input-number v-model="formData.need"  style="width:20%" :precision="2" :clearable="false"  />
+        <el-form-item label="k体:"  prop="score" >
+          <el-input-number v-model="formData.score"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="请假天数:"  prop="leave" >
-          <el-input-number v-model="formData.leave"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="k1体:"  prop="score2" >
+          <el-input-number v-model="formData.score2"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="旷工:"  prop="absent" >
-          <el-input-number v-model="formData.absent"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="k1理:"  prop="score1" >
+          <el-input-number v-model="formData.score1"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="迟到早退天数:"  prop="cdzt" >
-          <el-input-number v-model="formData.cdzt"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="k1机:"  prop="score3" >
+          <el-input-number v-model="formData.score3"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <!-- <el-form-item label="状态:"  prop="status" >
-            <el-select v-model="formData.status" placeholder="请选择" style="width:100%" :clearable="true" >
-               <el-option v-for="item in ['已审核','待审核']" :key="item" :label="item" :value="item" />
-            </el-select>
-        </el-form-item> -->
-        <el-form-item label="实际签到天数:"  prop="signed" >
-          <el-input-number v-model="formData.signed"  style="width:20%" :precision="2" :clearable="true"  />
+        <el-form-item label="k2理:"  prop="score4" >
+          <el-input-number v-model="formData.score4"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="签到次数:"  prop="signIns" >
-          <el-input v-model.number="formData.signIns" :clearable="true" style="width:30%"  placeholder="请输入" />
+        <el-form-item label="k2机:"  prop="score5" >
+          <el-input-number v-model="formData.score5"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="自定义1:"  prop="custom" >
-          <el-input v-model="formData.custom" :clearable="true"  style="width:30%" placeholder="请输入" />
+        <el-form-item label="k3理:"  prop="score6" >
+          <el-input-number v-model="formData.score6"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="自定义2:"  prop="custom2" >
-          <el-input v-model="formData.custom2" :clearable="true"  style="width:30%" placeholder="请输入" />
+        <el-form-item label="k3机:"  prop="score7" >
+          <el-input-number v-model="formData.score7"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="自定义3:"  prop="custom3" >
-          <el-input v-model="formData.custom3" :clearable="true"  style="width:30%" placeholder="请输入" />
+        <el-form-item label="竞赛折算:"  prop="score8" >
+          <el-input-number v-model="formData.score8"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
-        <el-form-item label="自定义5:"  prop="custom4" >
-          <el-input v-model="formData.custom4" :clearable="true" style="width:30%"  placeholder="请输入" />
+        <el-form-item label="自定义1:"  prop="score9" >
+          <el-input-number v-model="formData.score9"  style="width:20%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="自定义2:"  prop="score10" >
+          <el-input-number v-model="formData.score10"  style="width:20%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="自定义3:"  prop="score11" >
+          <el-input-number v-model="formData.score11"  style="width:20%" :precision="2" :clearable="true"  />
+        </el-form-item>
+        <el-form-item label="自定义4:"  prop="score12" >
+          <el-input-number v-model="formData.score12"  style="width:20%" :precision="2" :clearable="true"  />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -143,19 +142,19 @@
 
 <script>
 export default {
-  name: 'OaAttendance'
+  name: 'OaClassHour'
 }
 </script>
 
 <script setup>
 import {
-  createOaAttendance,
-  deleteOaAttendance,
-  deleteOaAttendanceByIds,
-  updateOaAttendance,
-  findOaAttendance,
-  getOaAttendanceList
-} from '@/api/oaAttendance'
+  createOaClassHour,
+  deleteOaClassHour,
+  deleteOaClassHourByIds,
+  updateOaClassHour,
+  findOaClassHour,
+  getOaClassHourList
+} from '@/api/oaClassHour'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
@@ -164,39 +163,31 @@ import { ref, reactive } from 'vue'
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-        cardNumber: '',
-        month: 0,
-        need: 0,
-        leave: 0,
-        absent: 0,
-        cdzt: 0,
-        signed: 0,
-        signIns: 0,
-        custom: '',
-        custom2: '',
-        custom3: '',
-        custom4: '',
-        status: '待审核',
+        card_number: '',
+        classTime: 0,
+        score: 0,
+        score2: 0,
+        score1: 0,
+        score3: 0,
+        score4: 0,
+        score5: 0,
+        score6: 0,
+        score7: 0,
+        score8: 0,
+        score9: 0,
+        score10: 0,
+        score11: 0,
+        score12: 0,
         })
 
 // 验证规则
 const rule = reactive({
-               cardNumber : [{
+               card_number : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
                }],
-               month : [{
-                   required: true,
-                   message: '',
-                   trigger: ['input','blur'],
-               }],
-               need : [{
-                   required: true,
-                   message: '',
-                   trigger: ['input','blur'],
-               }],
-               signed : [{
+               classTime : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
@@ -240,7 +231,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getOaAttendanceList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getOaClassHourList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -275,7 +266,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteOaAttendanceFunc(row)
+            deleteOaClassHourFunc(row)
         })
     }
 
@@ -297,7 +288,7 @@ const onDelete = async() => {
         multipleSelection.value.map(item => {
           ids.push(item.ID)
         })
-      const res = await deleteOaAttendanceByIds({ ids })
+      const res = await deleteOaClassHourByIds({ ids })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -315,19 +306,19 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateOaAttendanceFunc = async(row) => {
-    const res = await findOaAttendance({ ID: row.ID })
+const updateOaClassHourFunc = async(row) => {
+    const res = await findOaClassHour({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
-        formData.value = res.data.reoaAttendance
+        formData.value = res.data.reoaClassHour
         dialogFormVisible.value = true
     }
 }
 
 
 // 删除行
-const deleteOaAttendanceFunc = async (row) => {
-    const res = await deleteOaAttendance({ ID: row.ID })
+const deleteOaClassHourFunc = async (row) => {
+    const res = await deleteOaClassHour({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -353,18 +344,21 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        cardNumber: '',
-        month: 0,
-        need: 0,
-        leave: 0,
-        absent: 0,
-        cdzt: 0,
-        signed: 0,
-        signIns: 0,
-        custom: '',
-        custom2: '',
-        custom3: '',
-        custom4: '',
+        card_number: '',
+        classTime: 0,
+        score: 0,
+        score2: 0,
+        score1: 0,
+        score3: 0,
+        score4: 0,
+        score5: 0,
+        score6: 0,
+        score7: 0,
+        score8: 0,
+        score9: 0,
+        score10: 0,
+        score11: 0,
+        score12: 0,
         }
 }
 // 弹窗确定
@@ -374,13 +368,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createOaAttendance(formData.value)
+                  res = await createOaClassHour(formData.value)
                   break
                 case 'update':
-                  res = await updateOaAttendance(formData.value)
+                  res = await updateOaClassHour(formData.value)
                   break
                 default:
-                  res = await createOaAttendance(formData.value)
+                  res = await createOaClassHour(formData.value)
                   break
               }
               if (res.code === 0) {
