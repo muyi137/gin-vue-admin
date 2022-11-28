@@ -38,20 +38,21 @@
 
             <el-upload
           class="excel-btn"
-          :action="`${path}/excel/importExcel?type=appraisal`"
+          :action="`${path}/oaExcel/oaImportExcel?type=appraisal`"
           :headers="{'x-token':userStore.token}"
           :on-success="getTableData"
           :show-file-list="false"
         >
           <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
         </el-upload>
-        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="handleExcelExport('ExcelExport.xlsx')" style="margin-left: 10px;">导出</el-button>
+        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="exportExc('教师绩效','table1')" style="margin-left: 10px;">导出</el-button>
         <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
         </div>
         <el-table
         ref="multipleTable"
         style="width: 100%"
         tooltip-effect="dark"
+        id="table1"
         :data="tableData"
         row-key="ID"
         @selection-change="handleSelectionChange"
@@ -127,12 +128,15 @@ import {
   getOaAppraisalList
 } from '@/api/oaAppraisal'
 
+ 
 import { useUserStore } from '@/pinia/modules/user'
-import { exportExcel, loadExcelData, downloadTemplate } from '@/api/excel'
+import { OaExportExcel, OaDownloadTemplate } from '@/api/oaExcel'
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+import FileSaver from 'file-saver'
+import * as XLSX from 'xlsx'
 
 const path = ref(import.meta.env.VITE_BASE_API)
 const userStore = useUserStore()
@@ -301,6 +305,16 @@ const deleteOaAppraisalFunc = async (row) => {
         getTableData()
     }
 }
+
+
+const exportExc = (name, id) => {
+      var wb = XLSX.utils.table_to_book(document.querySelector('#' + id))
+      var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
+      try {
+        FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), name + '.xlsx')
+      } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+      return wbout
+    }
 
 const downloadExcelTemplate = () => {
   downloadTemplate('ExcelAppraisal.xlsx')

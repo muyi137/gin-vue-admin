@@ -61,7 +61,6 @@ func (e *ExcelApi) ExportExcel(c *gin.Context) {
 func (e *ExcelApi) ImportExcel(c *gin.Context) {
 
     _, header, err := c.Request.FormFile("file")
-    excelType := c.PostForm("type")
 
     if err != nil {
         global.GVA_LOG.Error("接收文件失败!", zap.Error(err))
