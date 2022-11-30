@@ -1,14 +1,18 @@
 package example
 
 import (
-    "os"
-    "strings"
+	"fmt"
+	"github.com/spf13/cast"
+	"github.com/tealeg/xlsx"
+	"os"
+	"strings"
+	"time"
 
-    "github.com/flipped-aurora/gin-vue-admin/server/global"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/example"
-    "github.com/gin-gonic/gin"
-    "go.uber.org/zap"
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type ExcelApi struct{}
@@ -28,25 +32,25 @@ type ExcelApi struct{}
 // @Success   200
 // @Router    /excel/exportExcel [post]
 func (e *ExcelApi) ExportExcel(c *gin.Context) {
-    var excelInfo example.ExcelInfo
-    err := c.ShouldBindJSON(&excelInfo)
-    if err != nil {
-        response.FailWithMessage(err.Error(), c)
-        return
-    }
-    if strings.Index(excelInfo.FileName, "..") > -1 {
-        response.FailWithMessage("包含非法字符", c)
-        return
-    }
-    filePath := global.GVA_CONFIG.Excel.Dir + excelInfo.FileName
-    err = excelService.ParseInfoList2Excel(excelInfo.InfoList, filePath)
-    if err != nil {
-        global.GVA_LOG.Error("转换Excel失败!", zap.Error(err))
-        response.FailWithMessage("转换Excel失败", c)
-        return
-    }
-    c.Writer.Header().Add("success", "true")
-    c.File(filePath)
+	var excelInfo example.ExcelInfo
+	err := c.ShouldBindJSON(&excelInfo)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if strings.Index(excelInfo.FileName, "..") > -1 {
+		response.FailWithMessage("包含非法字符", c)
+		return
+	}
+	filePath := global.GVA_CONFIG.Excel.Dir + excelInfo.FileName
+	err = excelService.ParseInfoList2Excel(excelInfo.InfoList, filePath)
+	if err != nil {
+		global.GVA_LOG.Error("转换Excel失败!", zap.Error(err))
+		response.FailWithMessage("转换Excel失败", c)
+		return
+	}
+	c.Writer.Header().Add("success", "true")
+	c.File(filePath)
 }
 
 // ImportExcel
@@ -60,15 +64,50 @@ func (e *ExcelApi) ExportExcel(c *gin.Context) {
 // @Router    /excel/importExcel [post]
 func (e *ExcelApi) ImportExcel(c *gin.Context) {
 
-    _, header, err := c.Request.FormFile("file")
+	_, header, err := c.Request.FormFile("file")
 
-    if err != nil {
-        global.GVA_LOG.Error("接收文件失败!", zap.Error(err))
-        response.FailWithMessage("接收文件失败", c)
-        return
-    }
-    _ = c.SaveUploadedFile(header, global.GVA_CONFIG.Excel.Dir+"ExcelImport.xlsx")
-    response.OkWithMessage("导入成功", c)
+	if err != nil {
+		global.GVA_LOG.Error("接收文件失败!", zap.Error(err))
+		response.FailWithMessage("接收文件失败", c)
+		return
+	}
+
+	excelType := c.PostForm("type")
+
+	switch {
+	case excelType == "appraisal":
+		fmt.Printf("优秀!\n")
+	case excelType == "B":
+		fmt.Printf("良好\n")
+	case excelType == "D":
+		fmt.Printf("及格\n")
+	default:
+		fmt.Printf("差\n")
+	}
+
+	xlsxPath := global.GVA_CONFIG.Local.Path + "/" + excelType + "/" + cast.ToString(time.Now().Unix()) + ".xlsx"
+
+	//打开文件路径
+	xlsxFile, err := xlsx.OpenFile(xlsxPath)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	//读取每一个sheet
+	for _, oneSheet := range xlsxFile.Sheets {
+		//读取每个sheet下面的行数据
+		for index, row := range oneSheet.Rows {
+			fmt.Println(index, row)
+			//读取每个cell的内容
+			for i, oneCell := range row.Cells {
+				fmt.Println("每个cell的内容：", i, oneCell)
+			}
+			row.AddCell().Value = "测试一下新增"
+		}
+	}
+
+	_ = c.SaveUploadedFile(header, global.GVA_CONFIG.Excel.Dir+"ExcelImport.xlsx")
+	response.OkWithMessage("导入成功", c)
 }
 
 // LoadExcel
@@ -79,18 +118,18 @@ func (e *ExcelApi) ImportExcel(c *gin.Context) {
 // @Success   200  {object}  response.Response{data=response.PageResult,msg=string}  "加载Excel数据,返回包括列表,总数,页码,每页数量"
 // @Router    /excel/loadExcel [get]
 func (e *ExcelApi) LoadExcel(c *gin.Context) {
-    menus, err := excelService.ParseExcel2InfoList()
-    if err != nil {
-        global.GVA_LOG.Error("加载数据失败!", zap.Error(err))
-        response.FailWithMessage("加载数据失败", c)
-        return
-    }
-    response.OkWithDetailed(response.PageResult{
-        List:     menus,
-        Total:    int64(len(menus)),
-        Page:     1,
-        PageSize: 999,
-    }, "加载数据成功", c)
+	menus, err := excelService.ParseExcel2InfoList()
+	if err != nil {
+		global.GVA_LOG.Error("加载数据失败!", zap.Error(err))
+		response.FailWithMessage("加载数据失败", c)
+		return
+	}
+	response.OkWithDetailed(response.PageResult{
+		List:     menus,
+		Total:    int64(len(menus)),
+		Page:     1,
+		PageSize: 999,
+	}, "加载数据成功", c)
 }
 
 // DownloadTemplate
@@ -103,20 +142,24 @@ func (e *ExcelApi) LoadExcel(c *gin.Context) {
 // @Success   200
 // @Router    /excel/downloadTemplate [get]
 func (e *ExcelApi) DownloadTemplate(c *gin.Context) {
-    fileName := c.Query("fileName")
-    filePath := global.GVA_CONFIG.Excel.Dir + fileName
+	fileName := c.Query("fileName")
+	filePath := global.GVA_CONFIG.Excel.Dir + fileName
 
-    fi, err := os.Stat(filePath)
-    if err != nil {
-        global.GVA_LOG.Error("文件不存在!", zap.Error(err))
-        response.FailWithMessage("文件不存在", c)
-        return
-    }
-    if fi.IsDir() {
-        global.GVA_LOG.Error("不支持下载文件夹!", zap.Error(err))
-        response.FailWithMessage("不支持下载文件夹", c)
-        return
-    }
-    c.Writer.Header().Add("success", "true")
-    c.File(filePath)
+	fi, err := os.Stat(filePath)
+	if err != nil {
+		global.GVA_LOG.Error("文件不存在!", zap.Error(err))
+		response.FailWithMessage("文件不存在", c)
+		return
+	}
+	if fi.IsDir() {
+		global.GVA_LOG.Error("不支持下载文件夹!", zap.Error(err))
+		response.FailWithMessage("不支持下载文件夹", c)
+		return
+	}
+	c.Writer.Header().Add("success", "true")
+	c.File(filePath)
+}
+
+func (e *ExcelApi) OaDownloadTemplate(c *gin.Context) {
+	c.Writer.Header().Add("success", "true")
 }

@@ -15,13 +15,16 @@ func (s *OaAppraisalRouter) InitOaAppraisalRouter(Router *gin.RouterGroup) {
 	oaAppraisalRouterWithoutRecord := Router.Group("oaAppraisal")
 	var oaAppraisalApi = v1.ApiGroupApp.OaApiGroup.OaAppraisalApi
 	{
-		oaAppraisalRouter.POST("createOaAppraisal", oaAppraisalApi.CreateOaAppraisal)   // 新建OaAppraisal
-		oaAppraisalRouter.DELETE("deleteOaAppraisal", oaAppraisalApi.DeleteOaAppraisal) // 删除OaAppraisal
+		oaAppraisalRouter.POST("createOaAppraisal", oaAppraisalApi.CreateOaAppraisal)             // 新建OaAppraisal
+		oaAppraisalRouter.DELETE("deleteOaAppraisal", oaAppraisalApi.DeleteOaAppraisal)           // 删除OaAppraisal
 		oaAppraisalRouter.DELETE("deleteOaAppraisalByIds", oaAppraisalApi.DeleteOaAppraisalByIds) // 批量删除OaAppraisal
-		oaAppraisalRouter.PUT("updateOaAppraisal", oaAppraisalApi.UpdateOaAppraisal)    // 更新OaAppraisal
+		oaAppraisalRouter.PUT("updateOaAppraisal", oaAppraisalApi.UpdateOaAppraisal)              // 更新OaAppraisal
+
 	}
 	{
-		oaAppraisalRouterWithoutRecord.GET("findOaAppraisal", oaAppraisalApi.FindOaAppraisal)        // 根据ID获取OaAppraisal
-		oaAppraisalRouterWithoutRecord.GET("getOaAppraisalList", oaAppraisalApi.GetOaAppraisalList)  // 获取OaAppraisal列表
+		oaAppraisalRouterWithoutRecord.POST("importOaAppraisal", oaAppraisalApi.ImportOaAppraisal)  // 导入
+		oaAppraisalRouterWithoutRecord.GET("testOaAppraisal", oaAppraisalApi.TestOaAppraisal)       // 导入
+		oaAppraisalRouterWithoutRecord.GET("findOaAppraisal", oaAppraisalApi.FindOaAppraisal)       // 根据ID获取OaAppraisal
+		oaAppraisalRouterWithoutRecord.GET("getOaAppraisalList", oaAppraisalApi.GetOaAppraisalList) // 获取OaAppraisal列表
 	}
 }

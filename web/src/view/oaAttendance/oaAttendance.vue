@@ -39,6 +39,17 @@
                 <el-button icon="delete" size="small" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
             </template>
             </el-popover>
+            <el-upload
+          class="excel-btn"
+          :action="`${path}/oaAppraisal/importOaAppraisal`"
+          :headers="{'x-token':userStore.token}"
+          :on-success="getTableData"
+          :show-file-list="false" >
+        <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
+        </el-upload>
+        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="exportExc('教师绩效','table1')" style="margin-left: 10px;">导出</el-button>
+        <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
+        
         </div>
         <el-table
         ref="multipleTable"

@@ -69,10 +69,10 @@ export const oaImportExcel = () => {
     // @Produce  application/json
     // @Param fileName query fileName true "模板名称"
     // @Success 200
-    // @Router /OaExcel/OaDownloadTemplatec [get]
-export const OaDownloadTemplatec = (fileName) => {
+    // @Router /oaExcel/oaDownloadTemplate [get]
+export const oaDownloadTemplate = (fileName) => {
     return service({
-        url: '/excel/downloadTemplate',
+        url: '/oaExcel/oaDownloadTemplate',
         method: 'get',
         params: {
             fileName: fileName

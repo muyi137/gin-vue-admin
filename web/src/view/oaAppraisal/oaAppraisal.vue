@@ -38,12 +38,12 @@
 
             <el-upload
           class="excel-btn"
-          :action="`${path}/oaExcel/oaImportExcel?type=appraisal`"
+          :action="`${path}/oaAppraisal/importOaAppraisal`"
           :headers="{'x-token':userStore.token}"
           :on-success="getTableData"
           :show-file-list="false"
         >
-          <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
+        <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
         </el-upload>
         <el-button class="excel-btn" size="small" type="primary" icon="download" @click="exportExc('教师绩效','table1')" style="margin-left: 10px;">导出</el-button>
         <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
@@ -77,7 +77,7 @@
             layout="total, sizes, prev, pager, next, jumper"
             :current-page="page"
             :page-size="pageSize"
-            :page-sizes="[10, 30, 50, 100]"
+            :page-sizes="[20, 40, 80, 100, 9999999]"
             :total="total"
             @current-change="handleCurrentChange"
             @size-change="handleSizeChange"
@@ -128,9 +128,8 @@ import {
   getOaAppraisalList
 } from '@/api/oaAppraisal'
 
- 
 import { useUserStore } from '@/pinia/modules/user'
-import { OaExportExcel, OaDownloadTemplate } from '@/api/oaExcel'
+import { exportExcel, downloadTemplate } from '@/api/excel'
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -174,7 +173,7 @@ const elFormRef = ref()
 // =========== 表格控制部分 ===========
 const page = ref(1)
 const total = ref(0)
-const pageSize = ref(10)
+const pageSize = ref(20)
 const tableData = ref([])
 const searchInfo = ref({})
 
@@ -187,7 +186,7 @@ const onReset = () => {
 // 搜索
 const onSubmit = () => {
   page.value = 1
-  pageSize.value = 10
+  pageSize.value = 20
   getTableData()
 }
 
@@ -307,17 +306,48 @@ const deleteOaAppraisalFunc = async (row) => {
 }
 
 
-const exportExc = (name, id) => {
-      var wb = XLSX.utils.table_to_book(document.querySelector('#' + id))
-      var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
-      try {
-        FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), name + '.xlsx')
-      } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
-      return wbout
+const exportExc = async(name, id) => {
+      const table = await getOaAppraisalList({ page: page.value, pageSize: 9999999, ...searchInfo.value })
+      if (table.code === 0) {
+        var data = [
+         ['身份证号', '月份', '绩效值']
+        ]
+         
+        var res = table.data.list
+        const header = ['身份证号', '月份', '绩效值']
+        
+        for(var i = 0; i < res.length; i++) {
+            var params = [res[i].cardNumber, res[i].month, res[i].score]
+            data[i + 1] = params
+        }
+        // console.log(JSON.stringify(data))
+        var wb = XLSX.utils.aoa_to_sheet(data, {
+            header: header,
+            raw: true
+          }
+        )
+        const newWorkBook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(newWorkBook, wb, 'SheetJS')
+        var myDate = new Date()
+        var wbout = XLSX.writeFile(newWorkBook, name + myDate.toLocaleString() + '.xlsx')
+
+        
+ 
+        // var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
+
+        // try {
+        //   FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), name + myDate.toLocaleString() + '.xlsx')
+        // } catch (e) {
+        //   if (typeof console !== 'undefined') console.log(e, wbout) 
+        // }
+
+        return wbout
+      } 
+      
     }
 
 const downloadExcelTemplate = () => {
-  downloadTemplate('ExcelAppraisal.xlsx')
+  downloadTemplate('教师绩效模板.xlsx')
 }
 
 // 弹窗控制标记

@@ -9,11 +9,27 @@ import service from '@/utils/request'
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /oaAppraisal/createOaAppraisal [post]
 export const createOaAppraisal = (data) => {
-  return service({
-    url: '/oaAppraisal/createOaAppraisal',
-    method: 'post',
-    data
-  })
+    return service({
+        url: '/oaAppraisal/createOaAppraisal',
+        method: 'post',
+        data
+    })
+}
+
+// @Tags OaAppraisal
+// @Summary 创建OaAppraisal
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.OaAppraisal true "创建OaAppraisal"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
+// @Router /oaAppraisal/importOaAppraisal [post]
+export const importOaAppraisal = (data) => {
+    return service({
+        url: '/oaAppraisal/importOaAppraisal',
+        method: 'post',
+        data
+    })
 }
 
 // @Tags OaAppraisal
@@ -25,11 +41,11 @@ export const createOaAppraisal = (data) => {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
 // @Router /oaAppraisal/deleteOaAppraisal [delete]
 export const deleteOaAppraisal = (data) => {
-  return service({
-    url: '/oaAppraisal/deleteOaAppraisal',
-    method: 'delete',
-    data
-  })
+    return service({
+        url: '/oaAppraisal/deleteOaAppraisal',
+        method: 'delete',
+        data
+    })
 }
 
 // @Tags OaAppraisal
@@ -41,11 +57,11 @@ export const deleteOaAppraisal = (data) => {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
 // @Router /oaAppraisal/deleteOaAppraisal [delete]
 export const deleteOaAppraisalByIds = (data) => {
-  return service({
-    url: '/oaAppraisal/deleteOaAppraisalByIds',
-    method: 'delete',
-    data
-  })
+    return service({
+        url: '/oaAppraisal/deleteOaAppraisalByIds',
+        method: 'delete',
+        data
+    })
 }
 
 // @Tags OaAppraisal
@@ -57,11 +73,11 @@ export const deleteOaAppraisalByIds = (data) => {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
 // @Router /oaAppraisal/updateOaAppraisal [put]
 export const updateOaAppraisal = (data) => {
-  return service({
-    url: '/oaAppraisal/updateOaAppraisal',
-    method: 'put',
-    data
-  })
+    return service({
+        url: '/oaAppraisal/updateOaAppraisal',
+        method: 'put',
+        data
+    })
 }
 
 // @Tags OaAppraisal
@@ -73,11 +89,11 @@ export const updateOaAppraisal = (data) => {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
 // @Router /oaAppraisal/findOaAppraisal [get]
 export const findOaAppraisal = (params) => {
-  return service({
-    url: '/oaAppraisal/findOaAppraisal',
-    method: 'get',
-    params
-  })
+    return service({
+        url: '/oaAppraisal/findOaAppraisal',
+        method: 'get',
+        params
+    })
 }
 
 // @Tags OaAppraisal
@@ -89,9 +105,9 @@ export const findOaAppraisal = (params) => {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /oaAppraisal/getOaAppraisalList [get]
 export const getOaAppraisalList = (params) => {
-  return service({
-    url: '/oaAppraisal/getOaAppraisalList',
-    method: 'get',
-    params
-  })
+    return service({
+        url: '/oaAppraisal/getOaAppraisalList',
+        method: 'get',
+        params
+    })
 }

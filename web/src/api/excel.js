@@ -26,27 +26,7 @@ const handleFileError = (res, fileName) => {
     }
 }
 
-// @Tags excel
-// @Summary 导出Excel
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce  application/octet-stream
-// @Param data body model.ExcelInfo true "导出Excel文件信息"
-// @Success 200
-// @Router /excel/OaExportExcel [get]
-export const OaExportExcel = (tableData, fileName) => {
-    service({
-        url: '/excel/exportExcel',
-        method: 'get',
-        data: {
-            fileName: fileName,
-            infoList: tableData
-        },
-        responseType: 'blob'
-    }).then((res) => {
-        handleFileError(res, fileName)
-    })
-}
+
 
 // @Tags excel
 // @Summary 导出Excel
@@ -92,16 +72,16 @@ export const loadExcelData = () => {
 // @Produce  application/json
 // @Param fileName query fileName true "模板名称"
 // @Success 200
-// @Router /excel/downloadTemplatec [get]
-// export const downloadTemplatec = (fileName) => {
-//     return service({
-//         url: '/excel/downloadTemplate',
-//         method: 'get',
-//         params: {
-//             fileName: fileName
-//         },
-//         responseType: 'blob'
-//     }).then((res) => {
-//         handleFileError(res, fileName)
-//     })
-// }
+// @Router /excel/downloadTemplate [get]
+export const downloadTemplate = (fileName) => {
+    return service({
+        url: '/excel/downloadTemplate',
+        method: 'get',
+        params: {
+            fileName: fileName
+        },
+        responseType: 'blob'
+    }).then((res) => {
+        handleFileError(res, fileName)
+    })
+}

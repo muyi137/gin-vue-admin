@@ -5,16 +5,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type OaExcelRouter struct{}
+//type OaExcelRouter struct{}
+//
+//func (s *OaExcelRouter) InitOaExcelRouter(Router *gin.RouterGroup) {
+//	oaExcelRouter := Router.Group("oaExcel")
+//	var OaExcelApi = v1.ApiGroupApp.OaApiGroup.OaExcelApi
+//	{
+//		oaExcelRouter.POST("oaImportExcel", OaExcelApi.OaImportExcel) // 导入Excel
+//		//excelRouter.GET("oaLoadExcel", exaExcelApi.LoadExcel)               // 加载Excel数据
+//		oaExcelRouter.POST("oaExportExcel", OaExcelApi.OaExportExcel)          // 导出Excel
+//		oaExcelRouter.GET("oaDownloadTemplate", OaExcelApi.OaDownloadTemplate) // 下载模板文件
+//	}
+//}
 
-func (e *OaExcelRouter) InitOaExcelRouter(Router *gin.RouterGroup) {
-	OaExcelRouter := Router.Group("oaExcel")
-	OaExcelApi := v1.ApiGroupApp.OaApiGroup.OaExcelApi
+type OaExcelRouter struct {
+}
 
+// InitOaClassHourRouter 初始化 OaClassHour 路由信息
+func (s *OaExcelRouter) InitOaExcelRouter(Router *gin.RouterGroup) {
+
+	oaExcelRouterWithoutRecord := Router.Group("oaExcel")
+	var oaExcelApi = v1.ApiGroupApp.OaApiGroup.OaExcelApi
 	{
-		OaExcelRouter.POST("oaImportExcel", OaExcelApi.ImportExcel) // 导入Excel
-		//excelRouter.GET("oaLoadExcel", exaExcelApi.LoadExcel)               // 加载Excel数据
-		OaExcelRouter.POST("oaExportExcel", OaExcelApi.ExportExcel)          // 导出Excel
-		OaExcelRouter.GET("oaDownloadTemplate", OaExcelApi.DownloadTemplate) // 下载模板文件
+		//oaExcelRouterWithoutRecord.GET("findOaClassHour", oaExcelApi.FindOaClassHour)        // 根据ID获取OaClassHour
+		oaExcelRouterWithoutRecord.GET("oaDownloadTemplate", oaExcelApi.OaDownloadTemplate) // 获取OaClassHour列表
 	}
 }

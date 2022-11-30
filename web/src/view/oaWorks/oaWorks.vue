@@ -39,6 +39,17 @@
                 <el-button icon="delete" size="small" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
             </template>
             </el-popover>
+            <el-upload
+          class="excel-btn"
+          :action="`${path}/oaAppraisal/importOaAppraisal`"
+          :headers="{'x-token':userStore.token}"
+          :on-success="getTableData"
+          :show-file-list="false" >
+        <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
+        </el-upload>
+        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="exportExc('教师绩效','table1')" style="margin-left: 10px;">导出</el-button>
+        <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
+
         </div>
         <el-table
         ref="multipleTable"
@@ -61,6 +72,7 @@
             <el-button type="primary" link icon="edit" size="small" class="table-button" @click="updateOaWorksFunc(scope.row)">变更</el-button>
             <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">删除</el-button>
             </template>
+        
         </el-table-column>
         </el-table>
         <div class="gva-pagination">
@@ -122,6 +134,12 @@ import {
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+import { useUserStore } from '@/pinia/modules/user'
+import * as XLSX from 'xlsx'
+
+
+const path = ref(import.meta.env.VITE_BASE_API)
+const userStore = useUserStore()
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({

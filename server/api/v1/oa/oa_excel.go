@@ -24,7 +24,7 @@ type OaExcelApi struct{}
 // @Param     file  formData  file                           true  "导入Excel文件"
 // @Success   200   {object}  response.Response{msg=string}  "导入Excel文件"
 // @Router    /Oaexcel/importExcel [post]
-func (e *OaExcelApi) ImportExcel(c *gin.Context) {
+func (oaExcelApi *OaExcelApi) OaImportExcel(c *gin.Context) {
 
 	_, header, err := c.Request.FormFile("file")
 
@@ -70,7 +70,7 @@ func (e *OaExcelApi) ImportExcel(c *gin.Context) {
 // @Param     data  body  example.ExcelInfo  true  "导出Excel文件信息"
 // @Success   200
 // @Router    /excel/exportExcel [post]
-func (e *OaExcelApi) ExportExcel(c *gin.Context) {
+func (oaExcelApi *OaExcelApi) OaExportExcel(c *gin.Context) {
 	var excelInfo example.ExcelInfo
 	err := c.ShouldBindJSON(&excelInfo)
 	if err != nil {
@@ -101,7 +101,7 @@ func (e *OaExcelApi) ExportExcel(c *gin.Context) {
 // @Param     fileName  query  string  true  "模板名称"
 // @Success   200
 // @Router    /excel/downloadTemplate [get]
-func (e *OaExcelApi) DownloadTemplate(c *gin.Context) {
+func (oaExcelApi *OaExcelApi) OaDownloadTemplate(c *gin.Context) {
 	fileName := c.Query("fileName")
 	filePath := global.GVA_CONFIG.Excel.Dir + fileName
 
