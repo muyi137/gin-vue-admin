@@ -37,6 +37,17 @@
                 <el-button icon="delete" size="small" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
             </template>
             </el-popover>
+            <el-upload
+          class="excel-btn"
+          :action="`${path}/oaClassHour/importOaClassHour`"
+          :headers="{'x-token':userStore.token}"
+          :on-success="getTableData"
+          :show-file-list="false"
+        >
+        <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
+        </el-upload>
+        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="exportExc('课时')" style="margin-left: 10px;">导出</el-button>
+        <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
         </div>
         <el-table
         ref="multipleTable"
@@ -176,6 +187,11 @@ import {
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+import { useUserStore } from '@/pinia/modules/user'
+import * as XLSX from 'xlsx'
+
+const path = ref(import.meta.env.VITE_BASE_API)
+const userStore = useUserStore()
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
@@ -352,6 +368,58 @@ const deleteOaClassHourFunc = async (row) => {
         }
         getTableData()
     }
+}
+
+const exportExc = async(name) => {
+  const table = await getOaSalaryList({ page: page.value, pageSize: 9999999, ...searchInfo.value })
+  if (table.code === 0) {
+    var data = [
+      ['身份证号', '课头(几门课)', '上报日期', 'k体', 'k1体', 'k1理', 'k1机', 'k2理', 'k2机', 'k3理', 'k3机', '竞赛折算', '自定义1', '自定义2', '自定义3', '自定义4']
+    ]
+
+    var res = table.data.list
+    // const header = ['身份证号', '月份', '绩效值']
+ 
+    for (var i = 0; i < res.length; i++) {
+      var params = [
+        res[i].card_number,
+        res[i].classTime,
+        res[i].reportTime,
+        res[i].score,
+        res[i].score2,
+        res[i].score3,
+        res[i].score4,
+        res[i].score5,
+        res[i].score6,
+        res[i].score7,
+        res[i].score8,
+        res[i].score9,
+        res[i].score10,
+        res[i].score11,
+        res[i].score12
+      ]
+      data[i + 1] = params
+    }
+    // console.log(JSON.stringify(data))
+    var wb = XLSX.utils.aoa_to_sheet(data, {
+      // header: header,
+      raw: true
+    }
+    )
+    const newWorkBook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(newWorkBook, wb, 'SheetJS')
+    var myDate = new Date()
+    var wbout = XLSX.writeFile(newWorkBook, name + myDate.toLocaleString() + '.xlsx')
+
+    // var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' }) 
+    // try {
+    //   FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), name + myDate.toLocaleString() + '.xlsx')
+    // } catch (e) {
+    //   if (typeof console !== 'undefined') console.log(e, wbout) 
+    // }
+
+    return wbout
+  }
 }
 
 // 弹窗控制标记

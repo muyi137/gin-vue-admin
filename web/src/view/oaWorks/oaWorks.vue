@@ -41,13 +41,13 @@
             </el-popover>
             <el-upload
           class="excel-btn"
-          :action="`${path}/oaAppraisal/importOaAppraisal`"
+          :action="`${path}/oaWorks/importOaWorks`"
           :headers="{'x-token':userStore.token}"
           :on-success="getTableData"
           :show-file-list="false" >
         <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
         </el-upload>
-        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="exportExc('教师绩效','table1')" style="margin-left: 10px;">导出</el-button>
+        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="exportExc('行政绩效')" style="margin-left: 10px;">导出</el-button>
         <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
 
         </div>
@@ -275,6 +275,42 @@ const onDelete = async() => {
         getTableData()
       }
     }
+
+const exportExc = async(name) => {
+  const table = await getOaWorksList({ page: page.value, pageSize: 9999999, ...searchInfo.value })
+  if (table.code === 0) {
+    var data = [
+      ['身份证号', '月份', '绩效值']
+    ]
+
+    var res = table.data.list
+    const header = ['身份证号', '月份', '绩效值']
+
+    for (var i = 0; i < res.length; i++) {
+      var params = [res[i].cardNumbaer, res[i].month, res[i].score]
+      data[i + 1] = params
+    }
+    // console.log(JSON.stringify(data))
+    var wb = XLSX.utils.aoa_to_sheet(data, {
+      header: header,
+      raw: true
+    }
+    )
+    const newWorkBook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(newWorkBook, wb, 'SheetJS')
+    var myDate = new Date()
+    var wbout = XLSX.writeFile(newWorkBook, name + myDate.toLocaleString() + '.xlsx')
+
+    // var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' }) 
+    // try {
+    //   FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), name + myDate.toLocaleString() + '.xlsx')
+    // } catch (e) {
+    //   if (typeof console !== 'undefined') console.log(e, wbout) 
+    // }
+
+    return wbout
+  }
+}
 
 // 行为控制标记（弹窗内部需要增还是改）
 const type = ref('')

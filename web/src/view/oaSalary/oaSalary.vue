@@ -30,6 +30,17 @@
                 <el-button icon="delete" size="small" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="deleteVisible = true">删除</el-button>
             </template>
             </el-popover>
+            <el-upload
+          class="excel-btn"
+          :action="`${path}/oaSalary/importoaSalary`"
+          :headers="{'x-token':userStore.token}"
+          :on-success="getTableData"
+          :show-file-list="false"
+        >
+        <el-button size="small" type="primary" icon="upload" style="margin-left: 10px;">导入</el-button>
+        </el-upload>
+        <el-button class="excel-btn" size="small" type="primary" icon="download" @click="exportExc('基本工资')" style="margin-left: 10px;">导出</el-button>
+        <el-button class="excel-btn" size="small" type="success" icon="download" @click="downloadExcelTemplate()">下载模板</el-button>
         </div>
         <el-table
         ref="multipleTable"
@@ -142,6 +153,11 @@ import {
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+import { useUserStore } from '@/pinia/modules/user'
+import * as XLSX from 'xlsx'
+
+const path = ref(import.meta.env.VITE_BASE_API)
+const userStore = useUserStore()
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
@@ -235,6 +251,54 @@ const multipleSelection = ref([])
 // 多选
 const handleSelectionChange = (val) => {
     multipleSelection.value = val
+}
+
+const exportExc = async(name) => {
+  const table = await getOaSalaryList({ page: page.value, pageSize: 9999999, ...searchInfo.value })
+  if (table.code === 0) {
+    var data = [
+      ['基本工资', '身份证号', '岗位津贴', '学历', '专业职称', '工作年限', '统筹', '自定义', '自定义2', '自定义3', '自定义4']
+    ]
+
+    var res = table.data.list
+    // const header = ['身份证号', '月份', '绩效值']
+
+    for (var i = 0; i < res.length; i++) {
+      var params = [
+        res[i].basis,
+        res[i].card_number,
+        res[i].jobs,
+        res[i].eduLevel,
+        res[i].proTitles,
+        res[i].workYears,
+        res[i].planWhole,
+        res[i].custom1,
+        res[i].custom2,
+        res[i].custom3,
+        res[i].custom4
+      ]
+      data[i + 1] = params
+    }
+    // console.log(JSON.stringify(data))
+    var wb = XLSX.utils.aoa_to_sheet(data, {
+      // header: header,
+      raw: true
+    }
+    )
+    const newWorkBook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(newWorkBook, wb, 'SheetJS')
+    var myDate = new Date()
+    var wbout = XLSX.writeFile(newWorkBook, name + myDate.toLocaleString() + '.xlsx')
+
+    // var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' }) 
+    // try {
+    //   FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), name + myDate.toLocaleString() + '.xlsx')
+    // } catch (e) {
+    //   if (typeof console !== 'undefined') console.log(e, wbout) 
+    // }
+
+    return wbout
+  }
 }
 
 // 删除行
