@@ -136,6 +136,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useUserStore } from '@/pinia/modules/user'
 import * as XLSX from 'xlsx'
+import { downloadTemplate } from '@/api/excel'
 
 
 const path = ref(import.meta.env.VITE_BASE_API)
@@ -275,7 +276,9 @@ const onDelete = async() => {
         getTableData()
       }
     }
-
+const downloadExcelTemplate = () => {
+  downloadTemplate('行政绩效.xlsx')
+}
 const exportExc = async(name) => {
   const table = await getOaWorksList({ page: page.value, pageSize: 9999999, ...searchInfo.value })
   if (table.code === 0) {
@@ -301,11 +304,11 @@ const exportExc = async(name) => {
     var myDate = new Date()
     var wbout = XLSX.writeFile(newWorkBook, name + myDate.toLocaleString() + '.xlsx')
 
-    // var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' }) 
+    // var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
     // try {
     //   FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), name + myDate.toLocaleString() + '.xlsx')
     // } catch (e) {
-    //   if (typeof console !== 'undefined') console.log(e, wbout) 
+    //   if (typeof console !== 'undefined') console.log(e, wbout)
     // }
 
     return wbout

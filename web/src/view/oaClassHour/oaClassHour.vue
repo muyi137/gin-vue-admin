@@ -189,6 +189,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useUserStore } from '@/pinia/modules/user'
 import * as XLSX from 'xlsx'
+import { downloadTemplate } from '@/api/excel'
 
 const path = ref(import.meta.env.VITE_BASE_API)
 const userStore = useUserStore()
@@ -370,8 +371,12 @@ const deleteOaClassHourFunc = async (row) => {
     }
 }
 
+const downloadExcelTemplate = () => {
+  downloadTemplate('课时上报模板.xlsx')
+}
+
 const exportExc = async(name) => {
-  const table = await getOaSalaryList({ page: page.value, pageSize: 9999999, ...searchInfo.value })
+  const table = await getOaClassHourList({ page: page.value, pageSize: 9999999, ...searchInfo.value })
   if (table.code === 0) {
     var data = [
       ['身份证号', '课头(几门课)', '上报日期', 'k体', 'k1体', 'k1理', 'k1机', 'k2理', 'k2机', 'k3理', 'k3机', '竞赛折算', '自定义1', '自定义2', '自定义3', '自定义4']
@@ -379,7 +384,7 @@ const exportExc = async(name) => {
 
     var res = table.data.list
     // const header = ['身份证号', '月份', '绩效值']
- 
+
     for (var i = 0; i < res.length; i++) {
       var params = [
         res[i].card_number,
@@ -387,6 +392,7 @@ const exportExc = async(name) => {
         res[i].reportTime,
         res[i].score,
         res[i].score2,
+        res[i].score1,
         res[i].score3,
         res[i].score4,
         res[i].score5,

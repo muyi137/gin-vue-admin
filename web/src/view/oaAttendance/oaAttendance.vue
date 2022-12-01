@@ -174,6 +174,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useUserStore } from '@/pinia/modules/user'
 import * as XLSX from 'xlsx'
+import { downloadTemplate } from '@/api/excel'
 
 const path = ref(import.meta.env.VITE_BASE_API)
 const userStore = useUserStore()
@@ -295,6 +296,9 @@ const deleteRow = (row) => {
         })
     }
 
+const downloadExcelTemplate = () => {
+  downloadTemplate('考勤信息模板.xlsx')
+}
 const exportExc = async(name) => {
   const table = await getOaAttendanceList({ page: page.value, pageSize: 9999999, ...searchInfo.value })
   if (table.code === 0) {
@@ -304,8 +308,6 @@ const exportExc = async(name) => {
 
     var res = table.data.list
     // const header = ['身份证号', '月份', '绩效值']
-    
-
     for (var i = 0; i < res.length; i++) {
       var params = [
         res[i].cardNumber,
