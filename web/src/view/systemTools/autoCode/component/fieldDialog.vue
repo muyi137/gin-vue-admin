@@ -58,7 +58,10 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
-            :disabled="middleDate.fieldType!=='string'&&item.value==='LIKE'"
+            :disabled="
+              (middleDate.fieldType!=='string'&&item.value==='LIKE')||
+                ((middleDate.fieldType!=='int'&&middleDate.fieldType!=='time.Time'&&middleDate.fieldType!=='float64')&&(item.value==='BETWEEN' || item.value==='NOT BETWEEN'))
+            "
           />
         </el-select>
       </el-form-item>
@@ -77,6 +80,9 @@
             :value="item.type"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="是否排序">
+        <el-switch v-model="middleDate.sort" />
       </el-form-item>
       <el-form-item label="是否必填">
         <el-switch v-model="middleDate.require" />
@@ -129,6 +135,14 @@ const typeSearchOptions = ref([
   {
     label: 'LIKE',
     value: 'LIKE'
+  },
+  {
+    label: 'BETWEEN',
+    value: 'BETWEEN'
+  },
+  {
+    label: 'NOT BETWEEN',
+    value: 'NOT BETWEEN'
   }
 ])
 const typeOptions = ref([

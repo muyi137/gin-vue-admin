@@ -124,6 +124,17 @@
         <el-form-item label="排序标记" prop="sort" style="width:30%">
           <el-input v-model.number="form.sort" autocomplete="off" />
         </el-form-item>
+        <el-form-item prop="meta.activeName" style="width:30%">
+          <template #label>
+            <div>
+              <span> 高亮菜单 </span>
+              <el-tooltip content="注：当到达此路由时候，指定左侧菜单指定name会处于活跃状态（亮起），可为空，为空则为本路由Name。" placement="top" effect="light">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </div>
+          </template>
+          <el-input v-model="form.meta.activeName" :placeholder="form.name" autocomplete="off" />
+        </el-form-item>
         <el-form-item label="KeepAlive" prop="meta.keepAlive" style="width:30%">
           <el-select v-model="form.meta.keepAlive" style="width:100%" placeholder="是否keepAlive缓存页面">
             <el-option :value="false" label="否" />
@@ -132,6 +143,21 @@
         </el-form-item>
         <el-form-item label="CloseTab" prop="meta.closeTab" style="width:30%">
           <el-select v-model="form.meta.closeTab" style="width:100%" placeholder="是否自动关闭tab">
+            <el-option :value="false" label="否" />
+            <el-option :value="true" label="是" />
+          </el-select>
+        </el-form-item>
+        <el-form-item style="width:30%">
+          <template #label>
+            <div>
+              <span> 是否为基础页面 </span>
+              <el-tooltip content="此项选择为是，则不会展示左侧菜单以及顶部信息。" placement="top" effect="light">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </div>
+          </template>
+
+          <el-select v-model="form.meta.defaultMenu" style="width:100%" placeholder="是否为基础页面">
             <el-option :value="false" label="否" />
             <el-option :value="true" label="是" />
           </el-select>
@@ -318,10 +344,11 @@ const form = ref({
   ID: 0,
   path: '',
   name: '',
-  hidden: '',
+  hidden: false,
   parentId: '',
   component: '',
   meta: {
+    activeName: '',
     title: '',
     icon: '',
     defaultMenu: false,
@@ -376,14 +403,15 @@ const initForm = () => {
     ID: 0,
     path: '',
     name: '',
-    hidden: '',
+    hidden: false,
     parentId: '',
     component: '',
     meta: {
       title: '',
       icon: '',
       defaultMenu: false,
-      keepAlive: ''
+      closeTab: false,
+      keepAlive: false
     }
   }
 }

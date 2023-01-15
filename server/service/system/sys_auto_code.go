@@ -10,7 +10,6 @@ import (
 	"go/parser"
 	"go/token"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"os"
@@ -162,6 +161,10 @@ func (autoCodeService *AutoCodeService) PreviewTemp(autoCode system.AutoCodeStru
 			autoCode.NeedValid = true
 			break
 		}
+		if autoCode.Fields[i].Sort {
+			autoCode.NeedSort = true
+			break
+		}
 	}
 	dataList, _, needMkdir, err := autoCodeService.getNeedList(&autoCode)
 	if err != nil {
@@ -201,7 +204,7 @@ func (autoCodeService *AutoCodeService) PreviewTemp(autoCode system.AutoCodeStru
 			builder.WriteString(strings.Replace(ext, ".", "", -1))
 		}
 		builder.WriteString("\n\n")
-		data, err := ioutil.ReadAll(f)
+		data, err := io.ReadAll(f)
 		if err != nil {
 			return nil, err
 		}
@@ -251,9 +254,13 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 			autoCode.NeedValid = true
 			break
 		}
+		if autoCode.Fields[i].Sort {
+			autoCode.NeedSort = true
+			break
+		}
 	}
 	// 增加判断: 重复创建struct
-	if autoCode.AutoMoveFile && AutoCodeHistoryServiceApp.Repeat(autoCode.StructName, autoCode.Package) {
+	if autoCode.AutoMoveFile && AutoCodeHistoryServiceApp.Repeat(autoCode.BusinessDB, autoCode.StructName, autoCode.Package) {
 		return RepeatErr
 	}
 	dataList, fileList, needMkdir, err := autoCodeService.getNeedList(&autoCode)
@@ -360,7 +367,7 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 		return err
 	}
 	if autoCode.AutoMoveFile {
-		return system.AutoMoveErr
+		return system.ErrAutoMove
 	}
 	return nil
 }
@@ -372,7 +379,7 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 //@return: []string, error
 
 func (autoCodeService *AutoCodeService) GetAllTplFile(pathName string, fileList []string) ([]string, error) {
-	files, err := ioutil.ReadDir(pathName)
+	files, err := os.ReadDir(pathName)
 	for _, fi := range files {
 		if fi.IsDir() {
 			fileList, err = autoCodeService.GetAllTplFile(pathName+"/"+fi.Name(), fileList)
@@ -394,8 +401,12 @@ func (autoCodeService *AutoCodeService) GetAllTplFile(pathName string, fileList 
 //@param: tableName string, dbName string
 //@return: err error, Columns []request.ColumnReq
 
-func (autoCodeService *AutoCodeService) DropTable(tableName string) error {
-	return global.GVA_DB.Exec("DROP TABLE " + tableName).Error
+func (autoCodeService *AutoCodeService) DropTable(BusinessDb, tableName string) error {
+	if BusinessDb != "" {
+		return global.GVA_DB.Exec("DROP TABLE " + tableName).Error
+	} else {
+		return global.MustGetGlobalDBByDBName(BusinessDb).Exec("DROP TABLE " + tableName).Error
+	}
 }
 
 //@author: [SliverHorn](https://github.com/SliverHorn)
@@ -816,7 +827,7 @@ func ImportReference(filepath, importCode, structName, packageName, groupName st
 		log.Fatal(err)
 	}
 	// 写回数据
-	return ioutil.WriteFile(filepath, buffer.Bytes(), 0o600)
+	return os.WriteFile(filepath, buffer.Bytes(), 0o600)
 }
 
 // CreatePlug 自动创建插件模板

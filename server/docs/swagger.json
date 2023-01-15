@@ -6,6 +6,7 @@
         "contact": {},
         "version": "0.0.1"
     },
+    "basePath": "/",
     "paths": {
         "/api/createApi": {
             "post": {
@@ -868,7 +869,7 @@
                     }
                 ],
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -876,21 +877,19 @@
                 "tags": [
                     "AutoCode"
                 ],
-                "summary": "创建插件模板",
+                "summary": "安装插件",
                 "parameters": [
                     {
-                        "description": "创建插件模板",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/system.SysAutoCode"
-                        }
+                        "type": "file",
+                        "description": "this is a test file",
+                        "name": "plug",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "创建插件模板成功",
+                        "description": "安装插件成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -900,8 +899,10 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "object",
-                                            "additionalProperties": true
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
                                         },
                                         "msg": {
                                             "type": "string"
@@ -2008,7 +2009,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": ""
                     }
                 }
             }
@@ -2043,7 +2044,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": ""
                     }
                 }
             }
@@ -3004,605 +3005,6 @@
                                     }
                                 }
                             ]
-                        }
-                    }
-                }
-            }
-        },
-        "/notify/sendLinkMessage": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Notify"
-                ],
-                "summary": "发送图文链接消息接口",
-                "parameters": [
-                    {
-                        "description": "发送图文链接消息的参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/response.LinkNotify"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"发送成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/notify/sendMarkdownMessage": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Notify"
-                ],
-                "summary": "发送markdown消息接口",
-                "parameters": [
-                    {
-                        "description": "发送markdown消息的参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/response.MarkdownNotify"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"发送成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/notify/sendTextMessage": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Notify"
-                ],
-                "summary": "发送文字消息接口",
-                "parameters": [
-                    {
-                        "description": "发送文字消息的参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/response.TextNotify"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"发送成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/shopGoods/createShopGoods": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ShopGoods"
-                ],
-                "summary": "创建ShopGoods",
-                "parameters": [
-                    {
-                        "description": "创建ShopGoods",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/shop.ShopGoods"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/shopGoods/deleteShopGoods": {
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ShopGoods"
-                ],
-                "summary": "删除ShopGoods",
-                "parameters": [
-                    {
-                        "description": "删除ShopGoods",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/shop.ShopGoods"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"删除成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/shopGoods/deleteShopGoodsByIds": {
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ShopGoods"
-                ],
-                "summary": "批量删除ShopGoods",
-                "parameters": [
-                    {
-                        "description": "批量删除ShopGoods",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.IdsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"批量删除成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/shopGoods/findShopGoods": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ShopGoods"
-                ],
-                "summary": "用id查询ShopGoods",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "addtime",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "approvalNumber",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "attrName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "categoryId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "createdAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "dataSources",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "dosage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "erpCode",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "expireTime",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "goodsCode",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "goodsId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "goodsImage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "goodsName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "主键ID",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "maxDiscountPrice",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "maxPromotionPrice",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "middlePackage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "packageNum",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "packageUnit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "productionName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "promotionPrice",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "promotionStatus",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "salePrice",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "scopeId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "stockNum",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "更新时间",
-                        "name": "updatedAt",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"查询成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/shopGoods/getShopGoodsList": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ShopGoods"
-                ],
-                "summary": "分页获取ShopGoods列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "addtime",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "approvalNumber",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "attrName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "categoryId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "createdAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "dataSources",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "dosage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "erpCode",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "expireTime",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "goodsCode",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "goodsId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "goodsImage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "goodsName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "主键ID",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "关键字",
-                        "name": "keyword",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "maxDiscountPrice",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "maxPromotionPrice",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "middlePackage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "packageNum",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "packageUnit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页大小",
-                        "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "productionName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "promotionPrice",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "promotionStatus",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "name": "salePrice",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "scopeId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "stockNum",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "更新时间",
-                        "name": "updatedAt",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/shopGoods/updateShopGoods": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ShopGoods"
-                ],
-                "summary": "更新ShopGoods",
-                "parameters": [
-                    {
-                        "description": "更新ShopGoods",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/shop.ShopGoods"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"更新成功\"}",
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 }
@@ -5608,11 +5010,11 @@
             "properties": {
                 "buffer-time": {
                     "description": "缓冲时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "expires-time": {
                     "description": "过期时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "issuer": {
                     "description": "签发者",
@@ -6532,27 +5934,6 @@
                 }
             }
         },
-        "response.LinkNotify": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "description": "发送的内容",
-                    "type": "string"
-                },
-                "messageUrl": {
-                    "description": "点击跳转路径",
-                    "type": "string"
-                },
-                "picUrl": {
-                    "description": "配图",
-                    "type": "string"
-                },
-                "title": {
-                    "description": "内容标题",
-                    "type": "string"
-                }
-            }
-        },
         "response.LoginResponse": {
             "type": "object",
             "properties": {
@@ -6567,34 +5948,12 @@
                 }
             }
         },
-        "response.MarkdownNotify": {
-            "type": "object",
-            "properties": {
-                "atMobiles": {
-                    "description": "需要艾特的人的手机号",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "content": {
-                    "description": "发送的内容",
-                    "type": "string"
-                },
-                "isAtAll": {
-                    "description": "是否艾特全体",
-                    "type": "boolean"
-                },
-                "title": {
-                    "description": "内容标题",
-                    "type": "string"
-                }
-            }
-        },
         "response.PageResult": {
             "type": "object",
             "properties": {
-                "list": {},
+                "list": {
+                    "type": "object"
+                },
                 "page": {
                     "type": "integer"
                 },
@@ -6623,7 +5982,9 @@
                 "code": {
                     "type": "integer"
                 },
-                "data": {},
+                "data": {
+                    "type": "object"
+                },
                 "msg": {
                     "type": "string"
                 }
@@ -6739,112 +6100,6 @@
                 }
             }
         },
-        "response.TextNotify": {
-            "type": "object",
-            "properties": {
-                "atMobiles": {
-                    "description": "需要艾特的人的手机号",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "content": {
-                    "description": "发送的内容",
-                    "type": "string"
-                },
-                "isAtAll": {
-                    "description": "是否艾特全体",
-                    "type": "boolean"
-                }
-            }
-        },
-        "shop.ShopGoods": {
-            "type": "object",
-            "properties": {
-                "addtime": {
-                    "type": "string"
-                },
-                "approvalNumber": {
-                    "type": "string"
-                },
-                "attrName": {
-                    "type": "string"
-                },
-                "categoryId": {
-                    "type": "integer"
-                },
-                "createdAt": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "dataSources": {
-                    "type": "string"
-                },
-                "dosage": {
-                    "type": "string"
-                },
-                "erpCode": {
-                    "type": "string"
-                },
-                "expireTime": {
-                    "type": "string"
-                },
-                "goodsCode": {
-                    "type": "string"
-                },
-                "goodsId": {
-                    "type": "integer"
-                },
-                "goodsImage": {
-                    "type": "string"
-                },
-                "goodsName": {
-                    "type": "string"
-                },
-                "id": {
-                    "description": "主键ID",
-                    "type": "integer"
-                },
-                "maxDiscountPrice": {
-                    "type": "number"
-                },
-                "maxPromotionPrice": {
-                    "type": "number"
-                },
-                "middlePackage": {
-                    "type": "integer"
-                },
-                "packageNum": {
-                    "type": "integer"
-                },
-                "packageUnit": {
-                    "type": "string"
-                },
-                "productionName": {
-                    "type": "string"
-                },
-                "promotionPrice": {
-                    "type": "number"
-                },
-                "promotionStatus": {
-                    "type": "string"
-                },
-                "salePrice": {
-                    "type": "number"
-                },
-                "scopeId": {
-                    "type": "string"
-                },
-                "stockNum": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "description": "更新时间",
-                    "type": "string"
-                }
-            }
-        },
         "system.AutoCodeStruct": {
             "type": "object",
             "properties": {
@@ -6854,6 +6109,10 @@
                 },
                 "autoCreateApiToSql": {
                     "description": "是否自动创建api",
+                    "type": "boolean"
+                },
+                "autoCreateResource": {
+                    "description": "是否自动创建资源标识",
                     "type": "boolean"
                 },
                 "autoMoveFile": {

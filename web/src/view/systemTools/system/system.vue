@@ -5,7 +5,7 @@
       <el-collapse v-model="activeNames">
         <el-collapse-item title="系统配置" name="1">
           <el-form-item label="环境值">
-<!--            <el-input v-model="config.system.env" />-->
+            <!-- <el-input v-model="config.system.env" />-->
             <el-select v-model="config.system.env" style="width:100%">
               <el-option value="public" />
               <el-option value="develop" />
@@ -46,10 +46,10 @@
           <el-form-item label="jwt签名">
             <el-input v-model="config.jwt['signing-key']" />
           </el-form-item>
-          <el-form-item label="有效期（秒）">
+          <el-form-item label="有效期">
             <el-input v-model="config.jwt['expires-time']" />
           </el-form-item>
-          <el-form-item label="缓冲期（秒）">
+          <el-form-item label="缓冲期">
             <el-input v-model="config.jwt['buffer-time']" />
           </el-form-item>
           <el-form-item label="签发者">
@@ -87,7 +87,7 @@
         </el-collapse-item>
         <el-collapse-item title="Redis admin数据库配置" name="4">
           <el-form-item label="库">
-            <el-input v-model="config.redis.db" />
+            <el-input v-model.number="config.redis.db" />
           </el-form-item>
           <el-form-item label="地址">
             <el-input v-model="config.redis.addr" />
@@ -145,14 +145,26 @@
             <el-form-item label="数据库">
               <el-input v-model="config.mysql['db-name']" />
             </el-form-item>
+            <el-form-item label="前缀">
+              <el-input v-model="config.mysql['refix']" />
+            </el-form-item>
+            <el-form-item label="复数表">
+              <el-switch v-model="config.mysql['singular']" />
+            </el-form-item>
+            <el-form-item label="引擎">
+              <el-input v-model="config.mysql['engine']" />
+            </el-form-item>
             <el-form-item label="maxIdleConns">
               <el-input v-model.number="config.mysql['max-idle-conns']" />
             </el-form-item>
             <el-form-item label="maxOpenConns">
               <el-input v-model.number="config.mysql['max-open-conns']" />
             </el-form-item>
+            <el-form-item label="写入日志">
+              <el-checkbox v-model="config.mysql['log-zap']" />
+            </el-form-item>
             <el-form-item label="日志模式">
-              <el-checkbox v-model="config.mysql['log-mode']" />
+              <el-input v-model="config.mysql['log-mode']" />
             </el-form-item>
           </template>
           <template v-if="config.system.dbType === 'pgsql'">
@@ -168,14 +180,26 @@
             <el-form-item label="数据库">
               <el-input v-model="config.pgsql.dbname" />
             </el-form-item>
+            <el-form-item label="前缀">
+              <el-input v-model="config.pgsql['refix']" />
+            </el-form-item>
+            <el-form-item label="复数表">
+              <el-switch v-model="config.pgsql['singular']" />
+            </el-form-item>
+            <el-form-item label="引擎">
+              <el-input v-model="config.pgsql['engine']" />
+            </el-form-item>
             <el-form-item label="maxIdleConns">
               <el-input v-model.number="config.pgsql['max-idle-conns']" />
             </el-form-item>
             <el-form-item label="maxOpenConns">
               <el-input v-model.number="config.pgsql['max-open-conns']" />
             </el-form-item>
+            <el-form-item label="写入日志">
+              <el-checkbox v-model="config.pgsql['log-zap']" />
+            </el-form-item>
             <el-form-item label="日志模式">
-              <el-checkbox v-model="config.pgsql['log-mode']" />
+              <el-input v-model="config.pgsql['log-mode']" />
             </el-form-item>
           </template>
         </el-collapse-item>

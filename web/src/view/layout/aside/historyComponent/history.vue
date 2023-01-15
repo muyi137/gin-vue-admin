@@ -112,7 +112,7 @@ const openContextMenu = (e) => {
     }
     left.value = e.clientX - width
     top.value = e.clientY + 10
-    rightActive.value = id.split('-')[1]
+    rightActive.value = id.substring(4)
   }
 }
 const closeAll = () => {
@@ -209,13 +209,6 @@ const setTab = (route) => {
 
 const historyMap = ref({})
 
-watch(() => historys.value, () => {
-  historyMap.value = {}
-  historys.value.forEach((item) => {
-    historyMap.value[getFmtString(item)] = item
-  })
-})
-
 const changeTab = (name) => {
   const tab = historyMap.value[name]
   router.push({
@@ -274,6 +267,11 @@ watch(() => route, (to, now) => {
 
 watch(() => historys.value, () => {
   sessionStorage.setItem('historys', JSON.stringify(historys.value))
+  historyMap.value = {}
+  historys.value.forEach((item) => {
+    historyMap.value[getFmtString(item)] = item
+  })
+  emitter.emit('setKeepAlive', historys.value)
 }, {
   deep: true
 })
@@ -311,6 +309,10 @@ const initPage = () => {
     activeValue.value = window.sessionStorage.getItem('activeValue')
   }
   setTab(route)
+  if (window.sessionStorage.getItem('needCloseAll') === 'true') {
+    closeAll()
+    window.sessionStorage.removeItem('needCloseAll')
+  }
 }
 initPage()
 

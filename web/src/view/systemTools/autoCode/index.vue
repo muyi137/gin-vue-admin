@@ -14,8 +14,29 @@
             </div>
           </template>
           <el-form ref="getTableForm" style="margin-top:24px" :inline="true" :model="dbform" label-width="120px">
+            <el-form-item label="业务库" prop="selectDBtype">
+              <template #label>
+                <el-tooltip content="注：需要提前到db-list自行配置多数据库，如未配置需配置后重启服务方可使用。（此处可选择对应库表，可理解为从哪个库选择表）" placement="bottom" effect="light">
+                  <div> 业务库 <el-icon><QuestionFilled /></el-icon> </div>
+                </el-tooltip>
+              </template>
+              <el-select v-model="dbform.businessDB" clearable style="width:194px" placeholder="选择业务库" @change="getDbFunc">
+                <el-option
+                  v-for="item in dbList"
+                  :key="item.aliasName"
+                  :value="item.aliasName"
+                  :label="item.aliasName"
+                  :disabled="item.disable"
+                >
+                  <div>
+                    <span>{{ item.aliasName }}</span>
+                    <span style="float:right;color:#8492a6;font-size:13px">{{ item.dbName }}</span>
+                  </div>
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="数据库名" prop="structName">
-              <el-select v-model="dbform.dbName" filterable placeholder="请选择数据库" @change="getTableFunc">
+              <el-select v-model="dbform.dbName" clearable filterable placeholder="请选择数据库" @change="getTableFunc">
                 <el-option
                   v-for="item in dbOptions"
                   :key="item.database"
@@ -48,7 +69,7 @@
     </div>
     <div class="gva-search-box">
       <!-- 初始版本自动化代码工具 -->
-      <el-form ref="autoCodeForm" :rules="rules" :model="form" size="small" label-width="120px" :inline="true">
+      <el-form ref="autoCodeForm" :rules="rules" :model="form" label-width="120px" :inline="true">
         <el-form-item label="Struct名称" prop="structName">
           <el-input v-model="form.structName" placeholder="首字母自动转换大写" />
         </el-form-item>
@@ -70,6 +91,39 @@
           </el-select>
           <el-icon class="auto-icon" @click="getPkgs"><refresh /></el-icon>
           <el-icon class="auto-icon" @click="goPkgs"><document-add /></el-icon>
+        </el-form-item>
+        <el-form-item label="业务库" prop="businessDB">
+          <template #label>
+            <el-tooltip content="注：需要提前到db-list自行配置多数据库，此项为空则会使用gva本库创建自动化代码(global.GVA_DB),填写后则会创建指定库的代码(global.MustGetGlobalDBByDBName(dbname))" placement="bottom" effect="light">
+              <div> 业务库 <el-icon><QuestionFilled /></el-icon> </div>
+            </el-tooltip>
+          </template>
+          <el-select
+            v-model="form.businessDB"
+            style="width:194px"
+            placeholder="选择业务库"
+          >
+            <el-option
+              v-for="item in dbList"
+              :key="item.aliasName"
+              :value="item.aliasName"
+              :label="item.aliasName"
+              :disabled="item.disable"
+            >
+              <div>
+                <span>{{ item.aliasName }}</span>
+                <span style="float:right;color:#8492a6;font-size:13px">{{ item.dbName }}</span>
+              </div>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <template #label>
+            <el-tooltip content="注：会自动在结构体添加 created_by updated_by deleted_by，方便用户进行资源权限控制" placement="bottom" effect="light">
+              <div> 创建资源标识 <el-icon><QuestionFilled /></el-icon> </div>
+            </el-tooltip>
+          </template>
+          <el-checkbox v-model="form.autoCreateResource" />
         </el-form-item>
         <el-form-item>
           <template #label>
@@ -100,6 +154,9 @@
         <el-table-column align="left" prop="fieldDesc" label="中文名" />
         <el-table-column align="left" prop="require" label="是否必填">
           <template #default="{row}">{{ row.require?"是":"否" }}</template>
+        </el-table-column>
+        <el-table-column align="left" prop="sort" label="是否排序">
+          <template #default="{row}">{{ row.sort?"是":"否" }}</template>
         </el-table-column>
         <el-table-column align="left" prop="fieldJson" min-width="120px" label="FieldJson" />
         <el-table-column align="left" prop="fieldType" label="Field数据类型" width="130" />
@@ -181,6 +238,16 @@
 
 <script setup>
 
+import FieldDialog from '@/view/systemTools/autoCode/component/fieldDialog.vue'
+import PreviewCodeDialog from '@/view/systemTools/autoCode/component/previewCodeDialg.vue'
+import { toUpperCase, toHump, toSQLLine, toLowerCase } from '@/utils/stringFun'
+import { createTemp, getDB, getTable, getColumn, preview, getMeta, getPackageApi } from '@/api/autoCode'
+import { getDict } from '@/utils/dictionary'
+import { ref, getCurrentInstance, reactive, watch, toRaw } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import WarningBar from '@/components/warningBar/warningBar.vue'
+
 const fieldTemplate = {
   fieldName: '',
   fieldDesc: '',
@@ -191,31 +258,21 @@ const fieldTemplate = {
   dataTypeLong: '',
   comment: '',
   require: false,
+  sort: false,
   errorText: '',
   clearable: true,
   fieldSearchType: '',
   dictType: ''
 }
-
-import FieldDialog from '@/view/systemTools/autoCode/component/fieldDialog.vue'
-import PreviewCodeDialog from '@/view/systemTools/autoCode/component/previewCodeDialg.vue'
-import { toUpperCase, toHump, toSQLLine, toLowerCase } from '@/utils/stringFun'
-import { createTemp, getDB, getTable, getColumn, preview, getMeta, getPackageApi } from '@/api/autoCode'
-import { getDict } from '@/utils/dictionary'
-import { ref, getCurrentInstance, reactive, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import WarningBar from '@/components/warningBar/warningBar.vue'
-
 const route = useRoute()
 const router = useRouter()
 const activeNames = reactive([])
 const preViewCode = ref({})
 const dbform = ref({
+  businessDB: '',
   dbName: '',
   tableName: ''
 })
-const dbOptions = ref([])
 const tableOptions = ref([])
 const addFlag = ref('')
 const fdMap = ref({})
@@ -226,8 +283,10 @@ const form = ref({
   package: '',
   abbreviation: '',
   description: '',
+  businessDB: '',
   autoCreateApiToSql: true,
   autoMoveFile: true,
+  autoCreateResource: false,
   fields: []
 })
 const rules = ref({
@@ -402,23 +461,39 @@ const enterForm = async(isPreview) => {
     }
   })
 }
+
+const dbList = ref([])
+const dbOptions = ref([])
+
 const getDbFunc = async() => {
-  const res = await getDB()
+  dbform.value.dbName = ''
+  dbform.value.tableName = ''
+  const res = await getDB({ businessDB: dbform.value.businessDB })
   if (res.code === 0) {
     dbOptions.value = res.data.dbs
+    dbList.value = res.data.dbList
   }
 }
 const getTableFunc = async() => {
-  const res = await getTable({ dbName: dbform.value.dbName })
+  const res = await getTable({ businessDB: dbform.value.businessDB, dbName: dbform.value.dbName })
   if (res.code === 0) {
     tableOptions.value = res.data.tables
   }
   dbform.value.tableName = ''
 }
+
 const getColumnFunc = async() => {
   const gormModelList = ['id', 'created_at', 'updated_at', 'deleted_at']
   const res = await getColumn(dbform.value)
   if (res.code === 0) {
+    let dbtype = ''
+    if (dbform.value.businessDB !== '') {
+      const dbtmp = dbList.value.find(item => item.aliasName === dbform.value.businessDB)
+      console.log(dbtmp)
+      const dbraw = toRaw(dbtmp)
+      console.log(dbraw)
+      dbtype = dbraw.dbtype
+    }
     const tbHump = toHump(dbform.value.tableName)
     form.value.structName = toUpperCase(tbHump)
     form.value.tableName = dbform.value.tableName
@@ -439,7 +514,7 @@ const getColumnFunc = async() => {
                 dataType: item.dataType,
                 fieldJson: fbHump,
                 dataTypeLong: item.dataTypeLong && item.dataTypeLong.split(',')[0],
-                columnName: item.columnName,
+                columnName: dbtype == 'oracle' ? item.columnName.toUpperCase() : item.columnName,
                 comment: item.columnComment,
                 require: false,
                 errorText: '',

@@ -27,7 +27,8 @@
                       </div>
                     </el-col>
                     <el-col :xs="10" :lg="14" :md="14" :sm="9" :xl="14" :pull="1">
-                      <el-breadcrumb class="breadcrumb">
+                      <!-- 修改为手机端不显示顶部标签 -->
+                      <el-breadcrumb v-show="!isMobile" class="breadcrumb">
                         <el-breadcrumb-item
                           v-for="item in matched.slice(1,matched.length)"
                           :key="item.path"
@@ -41,7 +42,7 @@
                           <div class="dp-flex justify-content-center align-items height-full width-full">
                             <span class="header-avatar" style="cursor: pointer">
                               <CustomPic />
-                              <span style="margin-left: 5px">{{ userStore.userInfo.nickName }}</span>
+                              <span v-show="!isMobile" style="margin-left: 5px">{{ userStore.userInfo.nickName }}</span>
                               <el-icon>
                                 <arrow-down />
                               </el-icon>
@@ -118,9 +119,9 @@ import { setUserAuthority } from '@/api/user'
 import { emitter } from '@/utils/bus.js'
 import { computed, ref, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useUserStore } from '@/pinia/modules/user'
 import { useRouterStore } from '@/pinia/modules/router'
 import { fmtTitle } from '@/utils/fmtRouterTitle'
+import { useUserStore } from '@/pinia/modules/user'
 
 const router = useRouter()
 const route = useRoute()
@@ -202,10 +203,8 @@ const changeUserAuth = async(id) => {
     authorityId: id
   })
   if (res.code === 0) {
-    emitter.emit('closeAllPage')
-    setTimeout(() => {
-      window.location.reload()
-    }, 50)
+    window.sessionStorage.setItem('needCloseAll', 'true')
+    window.location.reload()
   }
 }
 

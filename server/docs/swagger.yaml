@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   config.AliyunOSS:
     properties:
@@ -158,10 +159,10 @@ definitions:
     properties:
       buffer-time:
         description: 缓冲时间
-        type: integer
+        type: string
       expires-time:
         description: 过期时间
-        type: integer
+        type: string
       issuer:
         description: 签发者
         type: string
@@ -805,21 +806,6 @@ definitions:
       file:
         $ref: '#/definitions/example.ExaFile'
     type: object
-  response.LinkNotify:
-    properties:
-      content:
-        description: 发送的内容
-        type: string
-      messageUrl:
-        description: 点击跳转路径
-        type: string
-      picUrl:
-        description: 配图
-        type: string
-      title:
-        description: 内容标题
-        type: string
-    type: object
   response.LoginResponse:
     properties:
       expiresAt:
@@ -829,26 +815,10 @@ definitions:
       user:
         $ref: '#/definitions/system.SysUser'
     type: object
-  response.MarkdownNotify:
-    properties:
-      atMobiles:
-        description: 需要艾特的人的手机号
-        items:
-          type: string
-        type: array
-      content:
-        description: 发送的内容
-        type: string
-      isAtAll:
-        description: 是否艾特全体
-        type: boolean
-      title:
-        description: 内容标题
-        type: string
-    type: object
   response.PageResult:
     properties:
-      list: {}
+      list:
+        type: object
       page:
         type: integer
       pageSize:
@@ -867,7 +837,8 @@ definitions:
     properties:
       code:
         type: integer
-      data: {}
+      data:
+        type: object
       msg:
         type: string
     type: object
@@ -941,78 +912,6 @@ definitions:
       user:
         $ref: '#/definitions/system.SysUser'
     type: object
-  response.TextNotify:
-    properties:
-      atMobiles:
-        description: 需要艾特的人的手机号
-        items:
-          type: string
-        type: array
-      content:
-        description: 发送的内容
-        type: string
-      isAtAll:
-        description: 是否艾特全体
-        type: boolean
-    type: object
-  shop.ShopGoods:
-    properties:
-      addtime:
-        type: string
-      approvalNumber:
-        type: string
-      attrName:
-        type: string
-      categoryId:
-        type: integer
-      createdAt:
-        description: 创建时间
-        type: string
-      dataSources:
-        type: string
-      dosage:
-        type: string
-      erpCode:
-        type: string
-      expireTime:
-        type: string
-      goodsCode:
-        type: string
-      goodsId:
-        type: integer
-      goodsImage:
-        type: string
-      goodsName:
-        type: string
-      id:
-        description: 主键ID
-        type: integer
-      maxDiscountPrice:
-        type: number
-      maxPromotionPrice:
-        type: number
-      middlePackage:
-        type: integer
-      packageNum:
-        type: integer
-      packageUnit:
-        type: string
-      productionName:
-        type: string
-      promotionPrice:
-        type: number
-      promotionStatus:
-        type: string
-      salePrice:
-        type: number
-      scopeId:
-        type: string
-      stockNum:
-        type: integer
-      updatedAt:
-        description: 更新时间
-        type: string
-    type: object
   system.AutoCodeStruct:
     properties:
       abbreviation:
@@ -1020,6 +919,9 @@ definitions:
         type: string
       autoCreateApiToSql:
         description: 是否自动创建api
+        type: boolean
+      autoCreateResource:
+        description: 是否自动创建资源标识
         type: boolean
       autoMoveFile:
         description: 是否自动移动文件
@@ -1976,32 +1878,32 @@ paths:
   /autoCode/createPlug:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       parameters:
-      - description: 创建插件模板
-        in: body
-        name: data
+      - description: this is a test file
+        in: formData
+        name: plug
         required: true
-        schema:
-          $ref: '#/definitions/system.SysAutoCode'
+        type: file
       produces:
       - application/json
       responses:
         "200":
-          description: 创建插件模板成功
+          description: 安装插件成功
           schema:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  additionalProperties: true
-                  type: object
+                  items:
+                    type: object
+                  type: array
                 msg:
                   type: string
               type: object
       security:
       - ApiKeyAuth: []
-      summary: 创建插件模板
+      summary: 安装插件
       tags:
       - AutoCode
   /autoCode/createTemp:
@@ -2627,7 +2529,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: ""
       security:
       - ApiKeyAuth: []
       summary: 下载模板
@@ -2648,7 +2550,7 @@ paths:
       - application/octet-stream
       responses:
         "200":
-          description: OK
+          description: ""
       security:
       - ApiKeyAuth: []
       summary: 导出Excel
@@ -3194,369 +3096,6 @@ paths:
       summary: 更新菜单
       tags:
       - Menu
-  /notify/sendLinkMessage:
-    post:
-      parameters:
-      - description: 发送图文链接消息的参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/response.LinkNotify'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"发送成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 发送图文链接消息接口
-      tags:
-      - Notify
-  /notify/sendMarkdownMessage:
-    post:
-      parameters:
-      - description: 发送markdown消息的参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/response.MarkdownNotify'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"发送成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 发送markdown消息接口
-      tags:
-      - Notify
-  /notify/sendTextMessage:
-    post:
-      parameters:
-      - description: 发送文字消息的参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/response.TextNotify'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"发送成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 发送文字消息接口
-      tags:
-      - Notify
-  /shopGoods/createShopGoods:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 创建ShopGoods
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/shop.ShopGoods'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 创建ShopGoods
-      tags:
-      - ShopGoods
-  /shopGoods/deleteShopGoods:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: 删除ShopGoods
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/shop.ShopGoods'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"删除成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 删除ShopGoods
-      tags:
-      - ShopGoods
-  /shopGoods/deleteShopGoodsByIds:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: 批量删除ShopGoods
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.IdsReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 批量删除ShopGoods
-      tags:
-      - ShopGoods
-  /shopGoods/findShopGoods:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: addtime
-        type: string
-      - in: query
-        name: approvalNumber
-        type: string
-      - in: query
-        name: attrName
-        type: string
-      - in: query
-        name: categoryId
-        type: integer
-      - description: 创建时间
-        in: query
-        name: createdAt
-        type: string
-      - in: query
-        name: dataSources
-        type: string
-      - in: query
-        name: dosage
-        type: string
-      - in: query
-        name: erpCode
-        type: string
-      - in: query
-        name: expireTime
-        type: string
-      - in: query
-        name: goodsCode
-        type: string
-      - in: query
-        name: goodsId
-        type: integer
-      - in: query
-        name: goodsImage
-        type: string
-      - in: query
-        name: goodsName
-        type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
-      - in: query
-        name: maxDiscountPrice
-        type: number
-      - in: query
-        name: maxPromotionPrice
-        type: number
-      - in: query
-        name: middlePackage
-        type: integer
-      - in: query
-        name: packageNum
-        type: integer
-      - in: query
-        name: packageUnit
-        type: string
-      - in: query
-        name: productionName
-        type: string
-      - in: query
-        name: promotionPrice
-        type: number
-      - in: query
-        name: promotionStatus
-        type: string
-      - in: query
-        name: salePrice
-        type: number
-      - in: query
-        name: scopeId
-        type: string
-      - in: query
-        name: stockNum
-        type: integer
-      - description: 更新时间
-        in: query
-        name: updatedAt
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"查询成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 用id查询ShopGoods
-      tags:
-      - ShopGoods
-  /shopGoods/getShopGoodsList:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: addtime
-        type: string
-      - in: query
-        name: approvalNumber
-        type: string
-      - in: query
-        name: attrName
-        type: string
-      - in: query
-        name: categoryId
-        type: integer
-      - description: 创建时间
-        in: query
-        name: createdAt
-        type: string
-      - in: query
-        name: dataSources
-        type: string
-      - in: query
-        name: dosage
-        type: string
-      - in: query
-        name: erpCode
-        type: string
-      - in: query
-        name: expireTime
-        type: string
-      - in: query
-        name: goodsCode
-        type: string
-      - in: query
-        name: goodsId
-        type: integer
-      - in: query
-        name: goodsImage
-        type: string
-      - in: query
-        name: goodsName
-        type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
-      - description: 关键字
-        in: query
-        name: keyword
-        type: string
-      - in: query
-        name: maxDiscountPrice
-        type: number
-      - in: query
-        name: maxPromotionPrice
-        type: number
-      - in: query
-        name: middlePackage
-        type: integer
-      - in: query
-        name: packageNum
-        type: integer
-      - in: query
-        name: packageUnit
-        type: string
-      - description: 页码
-        in: query
-        name: page
-        type: integer
-      - description: 每页大小
-        in: query
-        name: pageSize
-        type: integer
-      - in: query
-        name: productionName
-        type: string
-      - in: query
-        name: promotionPrice
-        type: number
-      - in: query
-        name: promotionStatus
-        type: string
-      - in: query
-        name: salePrice
-        type: number
-      - in: query
-        name: scopeId
-        type: string
-      - in: query
-        name: stockNum
-        type: integer
-      - description: 更新时间
-        in: query
-        name: updatedAt
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 分页获取ShopGoods列表
-      tags:
-      - ShopGoods
-  /shopGoods/updateShopGoods:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: 更新ShopGoods
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/shop.ShopGoods'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"更新成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 更新ShopGoods
-      tags:
-      - ShopGoods
   /sysDictionary/createSysDictionary:
     post:
       consumes:
